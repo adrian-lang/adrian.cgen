@@ -1,5 +1,5 @@
 [run]
 branch = True
-source = paka/
+source = adrian/
 omit =
-    paka/__init__.py
+    adrian/__init__.py

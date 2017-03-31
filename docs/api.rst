@@ -1,4 +1,4 @@
 API
 ===
 
-.. automodule:: paka.cgen
+.. automodule:: adrian.cgen

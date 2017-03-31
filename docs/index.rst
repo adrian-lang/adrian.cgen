@@ -1,5 +1,5 @@
-paka.cgen
-=========
+adrian.cgen
+===========
 
 .. toctree::
    :maxdepth: 2

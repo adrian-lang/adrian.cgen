@@ -2,15 +2,15 @@ import setuptools
 
 
 setuptools.setup(
-    name="paka.cgen",
+    name="adrian.cgen",
     version="1.0.0",
     packages=setuptools.find_packages(),
     install_requires=[],
     extras_require={"testing": []},
     include_package_data=True,
-    namespace_packages=["paka"],
+    namespace_packages=["adrian"],
     zip_safe=False,
-    url="https://github.com/PavloKapyshin/paka.cgen",
+    url="https://github.com/adrian-lang/adrian.cgen",
     keywords="c codegen",
     classifiers=[
         "Development Status :: 1 - Planning",
@@ -23,5 +23,5 @@ setuptools.setup(
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy"],
     license="BSD",
-    author="Pavlo Kapyshin",
+    author="Adrian language team",
     author_email="i@93z.org")

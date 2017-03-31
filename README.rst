@@ -1,17 +1,17 @@
-paka.cgen
-=========
-.. image:: https://travis-ci.org/PavloKapyshin/paka.cgen.svg?branch=master
-    :target: https://travis-ci.org/PavloKapyshin/paka.cgen
+adrian.cgen
+===========
+.. image:: https://travis-ci.org/adrian-lang/adrian.cgen.svg?branch=master
+    :target: https://travis-ci.org/adrian-lang/adrian.cgen
 
 
 Installation
 ------------
-Library is `available on PyPI <https://pypi.python.org/pypi/paka.cgen>`_,
+Library is `available on PyPI <https://pypi.python.org/pypi/adrian.cgen>`_,
 you can use ``pip`` for installation:
 
 .. code-block:: console
 
-    $ pip install paka.cgen
+    $ pip install adrian.cgen
 
 
 Running tests
