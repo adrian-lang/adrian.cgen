@@ -4,6 +4,7 @@ paka.cgen
 .. toctree::
    :maxdepth: 2
 
+   design
    api
 
 
