@@ -379,5 +379,7 @@ Large example
 
 Things to think about
 ---------------------
+- getting element of struct (with ``mystruct.elem``)
+- getting element of pointer to struct (with ``mystruct->elem``)
 - maybe there must be some kind of context object where ``CFuncDescr``
   and ``CVarDescr`` (what about ``struct``\ s?) are "registered"
