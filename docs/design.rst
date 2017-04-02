@@ -188,8 +188,51 @@ Struct declaration
                 "balance": Val("123456", CTypes.int)},
             type_=acc_struct))
 
+.. code-block:: c
+
+    struct account *jcole = {1, "John", "Cole", 123456}
+
+.. code-block:: python
+
+    Decl(
+        "jcole",
+        Val(
+            {
+                "id": Val("1", CTypes.int),
+                "first_name": Val("John", CTypes.str),
+                "last_name": Val("Cole", CTypes.str),
+                "balance": Val("123456", CTypes.int)},
+            type_=CTypes.pointer(acc_struct)))
+
 ``type_=acc_struct`` is equivalent to ``type_=CTypes.struct("account")``.
 Can we work without ``CTypes.struct("account")`` feature?
+
+Getting item from struct
+------------------------
+
+.. code-block:: c
+
+    /* Declaration of struct account and jcole variable is done above */
+    int jcole_id = jcole->id;
+
+.. code-block:: python
+
+    Decl(
+        "jcole_id",
+        StructElem("jcole", "id"))
+
+.. code-block:: c
+
+    /* Declaration of struct account and jdoe variable is done above */
+    int jdoe_id = jdoe.id
+
+.. code-block:: python
+
+    Decl(
+        "jdoe_id",
+        StructElem("jdoe", "id"))
+
+StructElem determines a type of struct and according to this type does translation.
 
 If
 --
@@ -379,7 +422,5 @@ Large example
 
 Things to think about
 ---------------------
-- getting element of struct (with ``mystruct.elem``)
-- getting element of pointer to struct (with ``mystruct->elem``)
 - maybe there must be some kind of context object where ``CFuncDescr``
   and ``CVarDescr`` (what about ``struct``\ s?) are "registered"
