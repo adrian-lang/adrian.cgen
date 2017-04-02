@@ -124,6 +124,33 @@ Assignment
 
 Type of ``Val("3")`` should be inferred from type of ``Var("a")`` or ``Assignment("a", ...)``.
 
+Setting first element of int array
+----------------------------------
+.. code-block:: c
+
+    /* int a[2] = {0, 1} is done above */
+    a[0] = 1
+
+.. code-block:: python
+
+    Assignment(
+        ArrayElemByIndex("a", "0"),
+        Val("1", type_=CTypes.int))
+
+Setting first element and getting second element of int array
+-------------------------------------------------------------
+.. code-block:: c
+
+    /* int a[2] = {0, 1} is done above */
+    a[0] = a[1]
+
+.. code-block:: python
+
+    Assignment(
+        ArrayElemByIndex("a", "0"),
+        ArrayElemByIndex("a", "1"))
+
+
 Struct declaration
 ------------------
 .. code-block:: c
@@ -354,5 +381,3 @@ Things to think about
 ---------------------
 - maybe there must be some kind of context object where ``CFuncDescr``
   and ``CVarDescr`` (what about ``struct``\ s?) are "registered"
-- some essential things from C are missing (e.g. getting/setting item
-  from/of array); this has to be designed :)
