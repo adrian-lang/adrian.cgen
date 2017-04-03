@@ -1,4 +1,4 @@
-class Val:
+class Val(object):
 
     def __init__(self, literal, type_):
         self._literal = literal
@@ -13,7 +13,7 @@ class Val:
         return self._type
 
 
-class Var:
+class Var(object):
 
     def __init__(self, name):
         self._name = name
@@ -23,7 +23,7 @@ class Var:
         return self._name
 
 
-class Expr:
+class Expr(object):
 
     def __init__(self, op, expr1, expr2):
         self._op = op
@@ -43,7 +43,7 @@ class Expr:
         return self._expr2
 
 
-class FuncCall:
+class FuncCall(object):
 
     def __init__(self, name, *args):
         self._name = name
@@ -58,7 +58,7 @@ class FuncCall:
         return self._args
 
 
-class Decl:
+class Decl(object):
 
     def __init__(self, name, type_or_expr):
         self._name = name
@@ -82,7 +82,7 @@ class Decl:
         return self._expr
 
 
-class Assignment:
+class Assignment(object):
 
     def __init__(self, name, expr):
         self._name = name
@@ -97,7 +97,7 @@ class Assignment:
         return self._expr
 
 
-class ArrayElemByIndex:
+class ArrayElemByIndex(object):
 
     def __init__(self, name, index):
         self._name = name
@@ -112,7 +112,7 @@ class ArrayElemByIndex:
         return self._index
 
 
-class Struct:
+class Struct(object):
 
     def __init__(self, name, body):
         self._name = name
@@ -127,7 +127,7 @@ class Struct:
         return self._body
 
 
-class StructElem:
+class StructElem(object):
 
     def __init__(self, struct_name, elem_name):
         self._struct_name = struct_name
@@ -142,7 +142,7 @@ class StructElem:
         return self._elem_name
 
 
-class If:
+class If(object):
 
     def __init__(self, cond, body, else_ifs=[], else_=None):
         self._cond = cond
@@ -167,7 +167,7 @@ class If:
         return self._else
 
 
-class ElseIf:
+class ElseIf(object):
 
     def __init__(self, cond, body):
         self._cond = cond
@@ -182,7 +182,7 @@ class ElseIf:
         return self._body
 
 
-class Else:
+class Else(object):
 
     def __init__(self, body):
         self._body = body
@@ -192,7 +192,7 @@ class Else:
         return self._body
 
 
-class While:
+class While(object):
 
     def __init__(self, cond, body):
         self._cond = cond
@@ -211,7 +211,7 @@ class DoWhile(While):
     pass
 
 
-class For:
+class For(object):
 
     def __init__(self, cond, body):
         self._cond = cond
@@ -226,7 +226,7 @@ class For:
         return self._body
 
 
-class Return:
+class Return(object):
 
     def __init__(self, expr):
         self._expr = expr
@@ -236,7 +236,7 @@ class Return:
         return self._expr
 
 
-class Include:
+class Include(object):
 
     def __init__(self, module_name):
         self._module_name = module_name
@@ -246,9 +246,9 @@ class Include:
         return self._module_name
 
 
-class Func:
+class Func(object):
 
-    def __init__(self, name, rettype, *args, body):
+    def __init__(self, name, rettype, args, body):
         self._name = name
         self._rettype = rettype
         self._args = args
@@ -271,9 +271,9 @@ class Func:
         return self._body
 
 
-class CFuncDescr:
+class CFuncDescr(object):
 
-    def __init__(self, name, rettype, *args, includes):
+    def __init__(self, name, rettype, args, includes):
         self._name = name
         self._rettype = rettype
         self._args = args
@@ -303,7 +303,7 @@ class CFuncDescr:
         return self._call_args
 
 
-class CVarDescr:
+class CVarDescr(object):
 
     def __init__(self, name, type_, includes):
         self._name = name

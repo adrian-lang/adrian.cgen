@@ -1,17 +1,15 @@
-def frobnicate(self, label, url_path=None):  # TODO: remove this :)
-    """Frobnicate label and url_path.
+from . import errors
+from . import objects
+from . import _checker
+from . import _generator
 
-    Parameters
-    ----------
-    label: str
-        Usually some text.
-    url_path: str
-        URL path.
 
-    Returns
-    -------
-    None
-        ``None``, you know.
+CheckError = errors.CheckError
 
-    """
-    print(label, url_path)
+
+def check(ast_):
+    _checker.main(ast_)
+
+
+def generate(ast_):
+    return _generator.main(ast_)

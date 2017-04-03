@@ -5,7 +5,7 @@ setuptools.setup(
     name="adrian.cgen",
     version="1.0.0",
     packages=setuptools.find_packages(),
-    install_requires=[],
+    install_requires=["paka.funcreg"],
     extras_require={"testing": []},
     include_package_data=True,
     namespace_packages=["adrian"],
