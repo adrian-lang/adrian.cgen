@@ -418,7 +418,7 @@ Large example
     chunks = []
     for chunk in generate(resulting_ast):
         chunks.append(chunk)
-    print("".print(chunks))
+    print("".join(chunks))
 
 Things to think about
 ---------------------
