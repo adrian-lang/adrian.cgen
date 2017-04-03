@@ -202,7 +202,7 @@ Struct declaration
                 "first_name": Val("John", CTypes.str),
                 "last_name": Val("Cole", CTypes.str),
                 "balance": Val("123456", CTypes.int)},
-            type_=CTypes.pointer(acc_struct)))
+            type_=CTypes.ptr(acc_struct)))
 
 ``type_=acc_struct`` is equivalent to ``type_=CTypes.struct("account")``.
 Can we work without ``CTypes.struct("account")`` feature?
