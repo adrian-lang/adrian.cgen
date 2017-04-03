@@ -1,3 +1,49 @@
+class _Type(object):
+
+    def __init__(self):
+        pass
+
+
+class _Int32(_Type):
+    pass
+
+
+class _Int64(_Type):
+    pass
+
+
+class _Char(_Type):
+    pass
+
+
+class _Array(_Type):
+
+    def __init__(self, type_):
+        self._type = type_
+
+    @property
+    def type_(self):
+        return self._type
+
+
+class _Ptr(_Array):
+    pass
+
+
+class CTypes(object):
+    int32 = _Int32()
+    int64 = _Int64()
+    char = _Char()
+
+    @classmethod
+    def ptr(cls, type_):
+        return _Ptr(type_)
+
+    @classmethod
+    def array(cls, type_):
+        return _Array(type_)
+
+
 class Val(object):
 
     def __init__(self, literal, type_):

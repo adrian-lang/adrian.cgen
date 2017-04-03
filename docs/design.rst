@@ -107,7 +107,7 @@ Declaration of int array
         "a",
         Val(
             (Val("0", type_=CTypes.int), Val("1", CTypes.int)),
-            CTypes.array))
+            CTypes.array(CTypes.int)))
 
 Assignment
 ----------
