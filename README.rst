@@ -3,6 +3,8 @@ adrian.cgen
 .. image:: https://travis-ci.org/adrian-lang/adrian.cgen.svg?branch=master
     :target: https://travis-ci.org/adrian-lang/adrian.cgen
 
+``adrian.cgen`` is a Python EDSL for C code generation.
+
 
 Installation
 ------------
