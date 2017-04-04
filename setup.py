@@ -27,12 +27,9 @@ setuptools.setup(
         "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: Implementation :: CPython",
-        "Programming Language :: Python :: Implementation :: PyPy"],
+        "Programming Language :: Python :: Implementation :: CPython"],
     license="BSD",
     author="Adrian language team",
     author_email="i@93z.org")
