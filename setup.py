@@ -14,7 +14,7 @@ setuptools.setup(
     name="adrian.cgen",
     description="EDSL for C code generation",
     long_description=_get_long_description(),
-    version="1.0.0",
+    version="1.0.1",
     packages=setuptools.find_packages(),
     install_requires=["paka.funcreg"],
     extras_require={"testing": []},
@@ -31,5 +31,5 @@ setuptools.setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: Implementation :: CPython"],
     license="BSD",
-    author="Adrian language team",
-    author_email="i@93z.org")
+    maintainer="Pavlo Kapyshin",
+    maintainer_email="i@93z.org")
