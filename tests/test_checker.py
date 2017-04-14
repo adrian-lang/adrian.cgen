@@ -60,5 +60,54 @@ class VarTest(unittest.TestCase):
         self.assertEqual(err.exception.message, cgen.errors._BAD_NAME.format_map({"name": "int"}))
 
 
+class ValTest(unittest.TestCase):
+
+    def test_int32_number(self):
+        inp = [cgen.objects.Val("200", type_=cgen.objects.CTypes.int32)]
+        self.assertIsNone(cgen.check(inp))
+
+    def test_int32_number_starts_with_zero(self):
+        inp = [cgen.objects.Val("0123", type_=cgen.objects.CTypes.int32)]
+        with self.assertRaises(cgen.errors.CheckError) as err:
+            cgen.check(inp)
+        self.assertEqual(err.exception.message, cgen.errors._BAD_LITERAL.format_map({"literal": "0123"}))
+
+    def test_int32_number_zero(self):
+        inp = [cgen.objects.Val("0", type_=cgen.objects.CTypes.int32)]
+        self.assertIsNone(cgen.check(inp))
+
+    def test_int32_some_string(self):
+        inp = [cgen.objects.Val("some_string_here123", type_=cgen.objects.CTypes.int32)]
+        with self.assertRaises(cgen.errors.CheckError) as err:
+            cgen.check(inp)
+        self.assertEqual(err.exception.message, cgen.errors._BAD_LITERAL.format_map({"literal": "some_string_here123"}))
+
+    def test_int64_number(self):
+        inp = [cgen.objects.Val("200", type_=cgen.objects.CTypes.int64)]
+        self.assertIsNone(cgen.check(inp))
+
+    def test_int64_number_starts_with_zero(self):
+        inp = [cgen.objects.Val("0123", type_=cgen.objects.CTypes.int64)]
+        with self.assertRaises(cgen.errors.CheckError) as err:
+            cgen.check(inp)
+        self.assertEqual(err.exception.message, cgen.errors._BAD_LITERAL.format_map({"literal": "0123"}))
+
+    def test_int64_number_zero(self):
+        inp = [cgen.objects.Val("0", type_=cgen.objects.CTypes.int64)]
+        self.assertIsNone(cgen.check(inp))
+
+    def test_int64_some_string(self):
+        inp = [cgen.objects.Val("some_string_here123", type_=cgen.objects.CTypes.int64)]
+        with self.assertRaises(cgen.errors.CheckError) as err:
+            cgen.check(inp)
+        self.assertEqual(err.exception.message, cgen.errors._BAD_LITERAL.format_map({"literal": "some_string_here123"}))
+
+    def test_char(self):
+        inp = [cgen.objects.Val("c", type_=cgen.objects.CTypes.char)]
+        with self.assertRaises(cgen.errors.CheckError) as err:
+            cgen.check(inp)
+        self.assertEqual(err.exception.message, cgen.errors._NOT_IMPLEMENTED)
+
+
 if __name__ == "__main__":
     unittest.main()

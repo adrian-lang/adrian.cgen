@@ -21,7 +21,7 @@ def bad_literal(literal):
 
 
 def not_implemented():
-    _errors(_NOT_IMPLEMENTED)
+    _error(_NOT_IMPLEMENTED)
 
 
 def _error(message, **keywords):
