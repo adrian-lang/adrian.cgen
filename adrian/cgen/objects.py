@@ -1,22 +1,30 @@
+"""Objects that represent C language constructions."""
+
+
 class _Type(object):
+    """Base class for EDSL objects."""
 
     def __init__(self):
         pass
 
 
 class _Int32(_Type):
+    """int32_t."""
     pass
 
 
 class _Int64(_Type):
+    """int64_t."""
     pass
 
 
 class _Char(_Type):
+    """char."""
     pass
 
 
 class _Array(_Type):
+    """C array."""
 
     def __init__(self, type_):
         self._type = type_
@@ -27,10 +35,12 @@ class _Array(_Type):
 
 
 class _Ptr(_Array):
+    """Pointer."""
     pass
 
 
 class CTypes(object):
+    """Container to ease importing."""
     int32 = _Int32()
     int64 = _Int64()
     char = _Char()
@@ -45,6 +55,7 @@ class CTypes(object):
 
 
 class Val(object):
+    """Value of any kind."""
 
     def __init__(self, literal, type_):
         self._literal = literal
@@ -60,6 +71,7 @@ class Val(object):
 
 
 class Var(object):
+    """Variable."""
 
     def __init__(self, name):
         self._name = name
@@ -70,6 +82,7 @@ class Var(object):
 
 
 class Expr(object):
+    """Expression."""
 
     def __init__(self, op, expr1, expr2):
         self._op = op
@@ -90,6 +103,7 @@ class Expr(object):
 
 
 class FuncCall(object):
+    """Function call."""
 
     def __init__(self, name, *args):
         self._name = name
@@ -105,6 +119,7 @@ class FuncCall(object):
 
 
 class Decl(object):
+    """Declaration"""
 
     def __init__(self, name, type_or_expr):
         self._name = name
@@ -129,6 +144,7 @@ class Decl(object):
 
 
 class Assignment(object):
+    """Assignment."""
 
     def __init__(self, name, expr):
         self._name = name
@@ -144,6 +160,7 @@ class Assignment(object):
 
 
 class ArrayElemByIndex(object):
+    """Representation of getting array element."""
 
     def __init__(self, name, index):
         self._name = name
@@ -159,6 +176,7 @@ class ArrayElemByIndex(object):
 
 
 class Struct(object):
+    """struct."""
 
     def __init__(self, name, body):
         self._name = name
@@ -174,6 +192,7 @@ class Struct(object):
 
 
 class StructElem(object):
+    """Representation of getting element of struct."""
 
     def __init__(self, struct_name, elem_name):
         self._struct_name = struct_name
@@ -189,6 +208,7 @@ class StructElem(object):
 
 
 class If(object):
+    """An if."""
 
     def __init__(self, cond, body, else_ifs=[], else_=None):
         self._cond = cond
@@ -214,6 +234,7 @@ class If(object):
 
 
 class ElseIf(object):
+    """An else-if."""
 
     def __init__(self, cond, body):
         self._cond = cond
@@ -229,6 +250,7 @@ class ElseIf(object):
 
 
 class Else(object):
+    """An else."""
 
     def __init__(self, body):
         self._body = body
@@ -239,6 +261,7 @@ class Else(object):
 
 
 class While(object):
+    """While."""
 
     def __init__(self, cond, body):
         self._cond = cond
@@ -254,10 +277,12 @@ class While(object):
 
 
 class DoWhile(While):
+    """TODO"""
     pass
 
 
 class For(object):
+    """A for."""
 
     def __init__(self, cond, body):
         self._cond = cond
@@ -273,6 +298,7 @@ class For(object):
 
 
 class Return(object):
+    """Return statement."""
 
     def __init__(self, expr):
         self._expr = expr
@@ -283,6 +309,7 @@ class Return(object):
 
 
 class Include(object):
+    """Representation of C include directive."""
 
     def __init__(self, module_name):
         self._module_name = module_name
@@ -293,6 +320,7 @@ class Include(object):
 
 
 class Func(object):
+    """Definition of function."""
 
     def __init__(self, name, rettype, args, body):
         self._name = name
@@ -318,6 +346,7 @@ class Func(object):
 
 
 class CFuncDescr(object):
+    """Declaration of C function for FFI."""
 
     def __init__(self, name, rettype, args, includes):
         self._name = name
@@ -350,6 +379,7 @@ class CFuncDescr(object):
 
 
 class CVarDescr(object):
+    """Definition of C variable or constant for FFI."""
 
     def __init__(self, name, type_, includes):
         self._name = name

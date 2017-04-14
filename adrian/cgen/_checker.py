@@ -9,11 +9,11 @@ from paka import funcreg
 
 CKEYWORDS = (
     "while",
-)
+    )
 
 CTYPES = (
     "int",
-)
+    )
 
 
 _FUNCS = funcreg.TypeRegistry()
@@ -21,7 +21,8 @@ _FUNCS = funcreg.TypeRegistry()
 
 @_FUNCS.register(objects.Val)
 def val(stmt, context):
-    if isinstance(stmt.type_, (type(objects.CTypes.int32), type(objects.CTypes.int64))):
+    if isinstance(stmt.type_, (
+            type(objects.CTypes.int32), type(objects.CTypes.int64))):
         if stmt.literal[0] == "0" and len(stmt.literal) > 1:
             errors.bad_literal(stmt.literal)
         good_int = re.compile(r"^[0-9]+$")
