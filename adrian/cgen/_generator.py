@@ -10,10 +10,26 @@ _FUNCS = funcreg.TypeRegistry()
 
 @_FUNCS.register(objects.Val)
 def val(stmt, context):
-    if isinstance(stmt.type_, (
-            type(objects.CTypes.int32), type(objects.CTypes.int64))):
-        return stmt.literal
-    errors.not_implemented()
+    if isinstance(stmt.type_, tuple(map(type, (
+            objects.CTypes.int32, objects.CTypes.int64,
+            objects.CTypes.char)))):
+        return val.reg[stmt.type_](stmt, context)
+    else:
+        errors.not_implemented()
+
+
+val.reg = funcreg.TypeRegistry()
+
+
+@val.reg.register(type(objects.CTypes.int32))
+@val.reg.register(type(objects.CTypes.int64))
+def _val_int32_int64(stmt, context):
+    return stmt.literal
+
+
+@val.reg.register(type(objects.CTypes.char))
+def _val_char(stmt, context):
+    return "'" + stmt.literal + "'"
 
 
 @_FUNCS.register(objects.Var)

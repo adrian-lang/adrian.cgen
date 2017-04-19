@@ -103,7 +103,21 @@ class ValTest(unittest.TestCase):
         self.assertEqual(err.exception.message, cgen.errors._BAD_LITERAL.format_map({"literal": "some_string_here123"}))
 
     def test_char(self):
-        inp = [cgen.objects.Val("c", type_=cgen.objects.CTypes.char)]
+        inp = [cgen.objects.Val("a", type_=cgen.objects.CTypes.char)]
+        self.assertIsNone(cgen.check(inp))
+
+    def test_char_long_string(self):
+        inp = [cgen.objects.Val("some_string", type_=cgen.objects.CTypes.char)]
+        with self.assertRaises(cgen.errors.CheckError) as err:
+            cgen.check(inp)
+        self.assertEqual(err.exception.message, cgen.errors._BAD_LITERAL.format_map({"literal": "some_string"}))
+
+    def test_int_array(self):
+        inp = [cgen.objects.Val((
+            cgen.objects.Val("0", type_=cgen.objects.CTypes.int32),
+            cgen.objects.Val("1", type_=cgen.objects.CTypes.int32)),
+            type_=cgen.objects.CTypes.array(cgen.objects.CTypes.int32))
+        ]
         with self.assertRaises(cgen.errors.CheckError) as err:
             cgen.check(inp)
         self.assertEqual(err.exception.message, cgen.errors._NOT_IMPLEMENTED)
