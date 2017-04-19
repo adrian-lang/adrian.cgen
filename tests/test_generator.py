@@ -24,12 +24,21 @@ class ValTest(unittest.TestCase):
         self.assertListEqual(["223"], cgen.generate(inp))
 
     def test_it_generates_char(self):
-        inp = [cgen.objects.Val("h", type_=cgen.objects.CTypes.char)]
+        inp = [cgen.objects.Val("a", type_=cgen.objects.CTypes.char)]
+        self.assertIsNone(cgen.check(inp))
+        self.assertListEqual(["'a'"], cgen.generate(inp))
+
+    def test_it_generates_int_array(self):
+        inp = [cgen.objects.Val((
+            cgen.objects.Val("0", type_=cgen.objects.CTypes.int32),
+            cgen.objects.Val("1", type_=cgen.objects.CTypes.int32)),
+            type_=cgen.objects.CTypes.array(cgen.objects.CTypes.int32))
+        ]
         with self.assertRaises(cgen.errors.CheckError) as err:
             cgen.check(inp)
         self.assertEqual(err.exception.message, cgen.errors._NOT_IMPLEMENTED)
         with self.assertRaises(cgen.errors.CheckError) as err:
-            result = cgen.generate(inp)
+            cgen.generate(inp)
         self.assertEqual(err.exception.message, cgen.errors._NOT_IMPLEMENTED)
 
 
