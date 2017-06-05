@@ -22,7 +22,9 @@ _FUNCS = funcreg.TypeRegistry()
 @_FUNCS.register(objects.Val)
 def val(stmt, context):
     if isinstance(stmt.type_, tuple(map(type, (
-            objects.CTypes.int32, objects.CTypes.int64,
+            objects.CTypes.int_fast8, objects.CTypes.int_fast32,
+            objects.CTypes.int_fast64, objects.CTypes.uint_fast8,
+            objects.CTypes.uint_fast32, objects.CTypes.uint_fast64,
             objects.CTypes.char)))):
         val.reg[stmt.type_](stmt, context)
     else:
@@ -32,9 +34,13 @@ def val(stmt, context):
 val.reg = funcreg.TypeRegistry()
 
 
-@val.reg.register(type(objects.CTypes.int32))
-@val.reg.register(type(objects.CTypes.int64))
-def _val_int32_int64(stmt, context):
+@val.reg.register(type(objects.CTypes.int_fast8))
+@val.reg.register(type(objects.CTypes.int_fast32))
+@val.reg.register(type(objects.CTypes.int_fast64))
+@val.reg.register(type(objects.CTypes.uint_fast8))
+@val.reg.register(type(objects.CTypes.uint_fast32))
+@val.reg.register(type(objects.CTypes.uint_fast64))
+def _val_int(stmt, context):
     good_int = re.compile(r"^[0-9]+$")
     if ((stmt.literal.startswith("0") and len(stmt.literal) > 1) or \
             not good_int.match(stmt.literal)):
