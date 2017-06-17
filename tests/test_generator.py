@@ -13,13 +13,39 @@ class VarTest(unittest.TestCase):
 
 class ValTest(unittest.TestCase):
 
-    def test_it_generates_int32(self):
-        inp = [cgen.objects.Val("223", type_=cgen.objects.CTypes.int32)]
+    def test_it_generates_int_fast8(self):
+        inp = [cgen.objects.Val(
+            "223", type_=cgen.objects.CTypes.int_fast8)]
         self.assertIsNone(cgen.check(inp))
         self.assertListEqual(["223"], cgen.generate(inp))
 
-    def test_it_generates_int64(self):
-        inp = [cgen.objects.Val("223", type_=cgen.objects.CTypes.int64)]
+    def test_it_generates_int_fast32(self):
+        inp = [cgen.objects.Val(
+            "223", type_=cgen.objects.CTypes.int_fast32)]
+        self.assertIsNone(cgen.check(inp))
+        self.assertListEqual(["223"], cgen.generate(inp))
+
+    def test_it_generates_int_fast64(self):
+        inp = [cgen.objects.Val(
+            "223", type_=cgen.objects.CTypes.int_fast64)]
+        self.assertIsNone(cgen.check(inp))
+        self.assertListEqual(["223"], cgen.generate(inp))
+
+    def test_it_generates_uint_fast8(self):
+        inp = [cgen.objects.Val(
+            "223", type_=cgen.objects.CTypes.uint_fast8)]
+        self.assertIsNone(cgen.check(inp))
+        self.assertListEqual(["223"], cgen.generate(inp))
+
+    def test_it_generates_uint_fast32(self):
+        inp = [cgen.objects.Val(
+            "223", type_=cgen.objects.CTypes.uint_fast32)]
+        self.assertIsNone(cgen.check(inp))
+        self.assertListEqual(["223"], cgen.generate(inp))
+
+    def test_it_generates_uint_fast64(self):
+        inp = [cgen.objects.Val(
+            "223", type_=cgen.objects.CTypes.uint_fast64)]
         self.assertIsNone(cgen.check(inp))
         self.assertListEqual(["223"], cgen.generate(inp))
 
@@ -30,9 +56,10 @@ class ValTest(unittest.TestCase):
 
     def test_it_generates_int_array(self):
         inp = [cgen.objects.Val((
-            cgen.objects.Val("0", type_=cgen.objects.CTypes.int32),
-            cgen.objects.Val("1", type_=cgen.objects.CTypes.int32)),
-            type_=cgen.objects.CTypes.array(cgen.objects.CTypes.int32))
+            cgen.objects.Val("0", type_=cgen.objects.CTypes.int_fast32),
+            cgen.objects.Val("1", type_=cgen.objects.CTypes.int_fast32)),
+            type_=cgen.objects.CTypes.array(
+                cgen.objects.CTypes.int_fast32))
         ]
         with self.assertRaises(cgen.errors.CheckError) as err:
             cgen.check(inp)

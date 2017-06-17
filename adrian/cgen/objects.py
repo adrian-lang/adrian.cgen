@@ -1,21 +1,90 @@
 """Objects that represent C language constructions."""
 
 
-class _Type(object):
-    """Base class for EDSL objects."""
+class _Object(object):
+    _keys = ()  # Override in subclass.
+
+    def __str__(self):
+        return "{}({})".format(
+            self.__class__.__name__,
+            ", ".join(
+                "{}={!r}".format(
+                    key, getattr(self, key)) for key in self._keys))
+
+    __repr__ = __str__
+
+
+class _Op(_Object):
+    """Base class for EDSL operators."""
 
     def __init__(self):
         pass
 
 
-class _Int32(_Type):
-    """int32_t."""
+class _Plus(_Op):
+    """+."""
     pass
 
 
-class _Int64(_Type):
-    """int64_t."""
+class _Minus(_Op):
+    """-."""
     pass
+
+
+class _Star(_Op):
+    """*."""
+    pass
+
+
+class _Slash(_Op):
+    """/."""
+    pass
+
+
+class COps(_Object):
+    """Container."""
+    plus = _Plus()
+    minus = _Minus()
+    star = _Star()
+    slash = _Slash()
+
+
+class _Type(_Object):
+    """Base class for EDSL types."""
+
+    def __init__(self):
+        pass
+
+
+class _UIntFast8(_Type):
+    """uint_fast8_t."""
+    pass
+
+
+class _UIntFast32(_Type):
+    """uint_fast32_t."""
+    pass
+
+
+class _UIntFast64(_Type):
+    """uint_fast64_t."""
+    pass
+
+
+class _IntFast8(_Type):
+    """int_fast8_t."""
+    pass
+
+
+class _IntFast32(_Type):
+    """int_fast32_t."""
+    pass
+
+
+class _IntFast64(_Type):
+    """int_fast64_t."""
+    pass
+
 
 
 class _Char(_Type):
@@ -25,6 +94,8 @@ class _Char(_Type):
 
 class _Array(_Type):
     """C array."""
+
+    _keys = ("type_", )
 
     def __init__(self, type_):
         self._type = type_
@@ -39,10 +110,14 @@ class _Ptr(_Array):
     pass
 
 
-class CTypes(object):
+class CTypes(_Object):
     """Container to ease importing."""
-    int32 = _Int32()
-    int64 = _Int64()
+    int_fast8 = _IntFast8()
+    int_fast32 = _IntFast32()
+    int_fast64 = _IntFast64()
+    uint_fast8 = _UIntFast8()
+    uint_fast32 = _UIntFast32()
+    uint_fast64 = _UIntFast64()
     char = _Char()
 
     @classmethod
@@ -54,8 +129,10 @@ class CTypes(object):
         return _Array(type_)
 
 
-class Val(object):
+class Val(_Object):
     """Value of any kind."""
+
+    _keys = ("literal", "type_")
 
     def __init__(self, literal, type_):
         self._literal = literal
@@ -70,8 +147,10 @@ class Val(object):
         return self._type
 
 
-class Var(object):
+class Var(_Object):
     """Variable."""
+
+    _keys = ("name", )
 
     def __init__(self, name):
         self._name = name
@@ -81,8 +160,10 @@ class Var(object):
         return self._name
 
 
-class Expr(object):
+class Expr(_Object):
     """Expression."""
+
+    _keys = ("op", "expr1", "expr2")
 
     def __init__(self, op, expr1, expr2):
         self._op = op
@@ -102,8 +183,10 @@ class Expr(object):
         return self._expr2
 
 
-class FuncCall(object):
+class FuncCall(_Object):
     """Function call."""
+
+    _keys = ("name", "args")
 
     def __init__(self, name, *args):
         self._name = name
@@ -118,17 +201,19 @@ class FuncCall(object):
         return self._args
 
 
-class Decl(object):
+class Decl(_Object):
     """Declaration"""
 
-    def __init__(self, name, type_or_expr):
+    _keys = ("name", "type_", "expr")
+
+    def __init__(self, name, type_=None, expr=None):
         self._name = name
-        self._type = None
-        self._expr = None
-        if isinstance(type_or_expr, (Val, FuncCall, Var, Expr)):
-            self._expr = type_or_expr
-        else:
-            self._type = type_or_expr
+        self._type = None or type_
+        self._expr = None or expr
+        # if isinstance(type_or_expr, (Val, FuncCall, Var, Expr)):
+        #     self._expr = type_or_expr
+        # else:
+        #     self._type = type_or_expr
 
     @property
     def name(self):
@@ -143,8 +228,10 @@ class Decl(object):
         return self._expr
 
 
-class Assignment(object):
+class Assignment(_Object):
     """Assignment."""
+
+    _keys = ("name", "expr")
 
     def __init__(self, name, expr):
         self._name = name
@@ -159,8 +246,10 @@ class Assignment(object):
         return self._expr
 
 
-class ArrayElemByIndex(object):
+class ArrayElemByIndex(_Object):
     """Representation of getting array element."""
+
+    _keys = ("name", "index")
 
     def __init__(self, name, index):
         self._name = name
@@ -175,8 +264,10 @@ class ArrayElemByIndex(object):
         return self._index
 
 
-class Struct(object):
+class Struct(_Object):
     """struct."""
+
+    _keys = ("name", "body")
 
     def __init__(self, name, body):
         self._name = name
@@ -191,8 +282,10 @@ class Struct(object):
         return self._body
 
 
-class StructElem(object):
+class StructElem(_Object):
     """Representation of getting element of struct."""
+
+    _keys = ("struct_name", "elem_name")
 
     def __init__(self, struct_name, elem_name):
         self._struct_name = struct_name
@@ -207,8 +300,10 @@ class StructElem(object):
         return self._elem_name
 
 
-class If(object):
+class If(_Object):
     """An if."""
+
+    _keys = ("cond", "body", "else_ifs", "else_")
 
     def __init__(self, cond, body, else_ifs=[], else_=None):
         self._cond = cond
@@ -233,8 +328,10 @@ class If(object):
         return self._else
 
 
-class ElseIf(object):
+class ElseIf(_Object):
     """An else-if."""
+
+    _keys = ("cond", "body")
 
     def __init__(self, cond, body):
         self._cond = cond
@@ -249,8 +346,10 @@ class ElseIf(object):
         return self._body
 
 
-class Else(object):
+class Else(_Object):
     """An else."""
+
+    _keys = ("body", )
 
     def __init__(self, body):
         self._body = body
@@ -260,8 +359,10 @@ class Else(object):
         return self._body
 
 
-class While(object):
+class While(_Object):
     """While."""
+
+    _keys = ("cond", "body")
 
     def __init__(self, cond, body):
         self._cond = cond
@@ -281,8 +382,10 @@ class DoWhile(While):
     pass
 
 
-class For(object):
+class For(_Object):
     """A for."""
+
+    _keys = ("cond", "body")
 
     def __init__(self, cond, body):
         self._cond = cond
@@ -297,8 +400,10 @@ class For(object):
         return self._body
 
 
-class Return(object):
+class Return(_Object):
     """Return statement."""
+
+    _keys = ("expr", )
 
     def __init__(self, expr):
         self._expr = expr
@@ -308,8 +413,10 @@ class Return(object):
         return self._expr
 
 
-class Include(object):
+class Include(_Object):
     """Representation of C include directive."""
+
+    _keys = ("module_name", )
 
     def __init__(self, module_name):
         self._module_name = module_name
@@ -319,8 +426,10 @@ class Include(object):
         return self._module_name
 
 
-class Func(object):
+class Func(_Object):
     """Definition of function."""
+
+    _keys = ("name", "rettype", "args", "body")
 
     def __init__(self, name, rettype, args, body):
         self._name = name
@@ -345,8 +454,10 @@ class Func(object):
         return self._body
 
 
-class CFuncDescr(object):
+class CFuncDescr(_Object):
     """Declaration of C function for FFI."""
+
+    _keys = ("name", "rettype", "args", "includes")
 
     def __init__(self, name, rettype, args, includes):
         self._name = name
@@ -373,13 +484,11 @@ class CFuncDescr(object):
     def includes(self):
         return self._includes
 
-    @property
-    def call_args(self):
-        return self._call_args
 
-
-class CVarDescr(object):
+class CVarDescr(_Object):
     """Definition of C variable or constant for FFI."""
+
+    _keys = ("name", "type_", "includes")
 
     def __init__(self, name, type_, includes):
         self._name = name
