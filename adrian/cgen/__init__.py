@@ -2,6 +2,7 @@ from . import errors
 from .objects import *  # noqa: F401,F403
 from . import _checker
 from . import _generator
+from ._new_generator import *
 
 
 CheckError = errors.CheckError
