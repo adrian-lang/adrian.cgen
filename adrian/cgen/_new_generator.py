@@ -21,8 +21,12 @@ class Generated:
 
     def _merge_includes(self, includes):
         for include in includes:
-            # TODO: include must not be in self.includes.
-            self.includes.append(include)
+            in_includes = False
+            for incl in self.includes:
+                if include.module_name == incl.module_name:
+                    in_includes = True
+            if not in_includes:
+                self.includes.append(include)
 
     def _merge_func_signs(self, func_signs):
         for func_sign in func_signs:
