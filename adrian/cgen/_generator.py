@@ -4,12 +4,35 @@ from . import _context
 from . import _layers
 
 
+_CTYPES_TO_STRINGS = {
+    key: value + "_t"
+    for key, value in [
+        (type(ctype), val)
+        for ctype, val in [
+            (objects.CTypes.int_fast8, "int_fast8"),
+            (objects.CTypes.int_fast32, "int_fast32"),
+            (objects.CTypes.int_fast64, "int_fast64"),
+            (objects.CTypes.uint_fast8, "uint_fast8"),
+            (objects.CTypes.uint_fast32, "uint_fast32"),
+            (objects.CTypes.uint_fast64, "uint_fast64")
+        ]]
+}
+
+
 class NodeGenerator(_layers.Layer):
+    _includes = []
+
+    def _add_include(self, include):
+        include_string = " ".join([
+            "#include",
+            include])
+        if include_string not in self._includes:
+            self._includes.append(include_string)
 
     def _type(self, type_):
-        # TODO: implement
-        # return "int"
-        errors.not_implemented()
+        # TODO: only int types are supported.
+        self._add_include("<stdint.h>")
+        return _CTYPES_TO_STRINGS[type(type_)]
 
     def _expr(self, expr):
         if isinstance(expr, objects.Val):
@@ -43,4 +66,10 @@ class NodeGenerator(_layers.Layer):
         ])
 
     def generate(self, node):
+        # TODO: Only one stmt is supported.
+        if self._includes:
+            return "\n\n".join([
+                "\n".join(self._includes),
+                self.get_registry()[node](node)
+            ])
         return self.get_registry()[node](node)
