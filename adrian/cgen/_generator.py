@@ -67,9 +67,10 @@ class NodeGenerator(_layers.Layer):
 
     def generate(self, node):
         # TODO: Only one stmt is supported.
+        node_result = self.get_registry()[node](node)
         if self._includes:
             return "\n\n".join([
                 "\n".join(self._includes),
-                self.get_registry()[node](node)
+                node_result
             ])
-        return self.get_registry()[node](node)
+        return node_result
