@@ -65,6 +65,16 @@ class NodeGenerator(_layers.Layer):
             "".join([self._expr(decl.expr), ";"])
         ])
 
+    @_layers.register(objects.Func)
+    def _func_decl(self, func_decl):
+        # Only empty body and args is supported, for now.
+        return " ".join([
+            self._type(func_decl.rettype),
+            "".join([func_decl.name, "(", ")"]),
+            "{",
+            "}"
+        ])
+
     def generate(self, node):
         # TODO: Only one stmt is supported.
         node_result = self.get_registry()[node](node)
