@@ -41,6 +41,16 @@ class NodeGenerator(_layers.Layer):
             return self._var(expr)
         errors.not_implemented()
 
+    def _sub_decl(self, decl):
+        """Generates decl without semicolon."""
+        result = " ".join([
+            self._type(decl.type_),
+            decl.name
+        ])
+        if not decl.expr is None:
+            result += " ".join(["", "=", self._expr(decl.expr)])
+        return result
+
     @_layers.register(objects.Val)
     def _val(self, val):
         if isinstance(val.type_, tuple(map(type, (
@@ -58,19 +68,24 @@ class NodeGenerator(_layers.Layer):
 
     @_layers.register(objects.Decl)
     def _decl(self, decl):
-        return " ".join([
-            self._type(decl.type_),
-            decl.name,
-            "=",
-            "".join([self._expr(decl.expr), ";"])
-        ])
+        """Generates decl with semicolon."""
+        return "".join([self._sub_decl(decl), ";"])
+
+    def _func_decl_args(self, args):
+        result = []
+        for arg in args:
+            result.append(self._sub_decl(arg))
+        return result
 
     @_layers.register(objects.Func)
     def _func_decl(self, func_decl):
-        # Only empty body and args is supported, for now.
+        # Only empty body is supported, for now.
         return " ".join([
             self._type(func_decl.rettype),
-            "".join([func_decl.name, "(", ")"]),
+            "".join([
+                func_decl.name, "(",
+                ", ".join(self._func_decl_args(func_decl.args)), ")"
+            ]),
             "{",
             "}"
         ])
