@@ -129,6 +129,10 @@ class NodeGenerator(_layers.Layer):
         body = "{\n" + "\n  ".join([""] + generated_body.rest_code) + "\n}"
         return " ".join([rettype, name, args, body])
 
+    @_layers.register(objects.Return)
+    def _return_stmt(self, return_stmt):
+        return "".join(["return", " ", self._expr(return_stmt.expr), ";"])
+
     def generate(self, node):
         # TODO: Only one stmt is supported.
         node_result = self.get_registry()[node](node)
