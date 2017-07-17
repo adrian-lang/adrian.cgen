@@ -19,15 +19,53 @@ _CTYPES_TO_STRINGS = {
 }
 
 
+class Generated:
+
+    def __init__(self, includes=None, func_signs=None, rest_code=None):
+        self.includes = includes or []
+        self.func_signs = func_signs or []
+        self.rest_code = rest_code or []
+
+    def to_csource(self):
+        general_list = self.includes + self.func_signs + self.rest_code
+        for line in general_list:
+            yield line
+
+    def _merge_includes(self, includes):
+        for include in includes:
+            in_includes = False
+            for incl in self.includes:
+                if include == incl:
+                    in_includes = True
+            if not in_includes:
+                self.includes.append(include)
+
+    def _merge_func_signs(self, func_signs):
+        for func_sign in func_signs:
+            self.func_signs.append(func_sign)
+
+    def _merge_rest_code(self, rest_code):
+        for code_stmt in rest_code:
+            self.rest_code.append(code_stmt)
+
+    def merge(self, generated):
+        self._merge_includes(generated.includes)
+        self._merge_func_signs(generated.func_signs)
+        self._merge_rest_code(generated.rest_code)
+
+
 class NodeGenerator(_layers.Layer):
     _includes = []
+
+    def _subadd_include(self, include):
+        if include not in self._includes:
+            self._includes.append(include)
 
     def _add_include(self, include):
         include_string = " ".join([
             "#include",
             include])
-        if include_string not in self._includes:
-            self._includes.append(include_string)
+        self._subadd_include(include_string)
 
     def _type(self, type_):
         # TODO: only int types are supported.
@@ -79,23 +117,20 @@ class NodeGenerator(_layers.Layer):
 
     @_layers.register(objects.Func)
     def _func_decl(self, func_decl):
-        # Only empty body is supported, for now.
-        return " ".join([
-            self._type(func_decl.rettype),
-            "".join([
-                func_decl.name, "(",
-                ", ".join(self._func_decl_args(func_decl.args)), ")"
-            ]),
-            "{",
-            "}"
-        ])
+        # HARDCORE! FIXME!
+        rettype = self._type(func_decl.rettype)
+        generated_body = Generated()
+        for stmt in func_decl.body:
+            generated_body.merge(self.generate(stmt))
+        for include in generated_body.includes:
+            self._subadd_include(include)
+        name = func_decl.name
+        args = "(" + ", ".join(self._func_decl_args(func_decl.args)) + ")"
+        body = "{\n" + "\n  ".join([""] + generated_body.rest_code) + "\n}"
+        return " ".join([rettype, name, args, body])
 
     def generate(self, node):
         # TODO: Only one stmt is supported.
         node_result = self.get_registry()[node](node)
-        if self._includes:
-            return "\n\n".join([
-                "\n".join(self._includes),
-                node_result
-            ])
-        return node_result
+        return Generated(
+            includes=self._includes, rest_code=[node_result])
