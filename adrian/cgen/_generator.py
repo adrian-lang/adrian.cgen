@@ -129,6 +129,16 @@ class NodeGenerator(_layers.Layer):
         body = "{\n" + "\n  ".join([""] + generated_body.rest_code) + "\n}"
         return " ".join([rettype, name, args, body])
 
+    @_layers.register(objects.Struct)
+    def _struct_decl(self, struct_decl):
+        generated_body = Generated()
+        for stmt in struct_decl.body:
+            generated_body.merge(self.generate(stmt))
+        for include in generated_body.includes:
+            self._subadd_include(include)
+        body = "{\n" + "\n  ".join([""] + generated_body.rest_code) + "\n}"
+        return " ".join(["struct", struct_decl.name, "".join([body, ";"])])
+
     @_layers.register(objects.Return)
     def _return_stmt(self, return_stmt):
         return "".join(["return", " ", self._expr(return_stmt.expr), ";"])
