@@ -1,6 +1,5 @@
 from . import errors
 from .objects import *  # noqa: F401,F403
-from . import _checker
 from ._generator import *
 
 
@@ -23,16 +22,7 @@ class Generator:
         return result
 
     def generate(self):
-        result = Generated()
+        subresult = Generated()
         for ast_ in self.ast_list:
-            result.merge(self.generate_ast(ast_))
-        for line in result.to_csource():
-            yield line
-
-
-def check(ast_):
-    _checker.main(ast_)
-
-
-def generate(ast_):
-    return _generator.main(ast_)
+            subresult.merge(self.generate_ast(ast_))
+        yield from subresult.to_csource()
