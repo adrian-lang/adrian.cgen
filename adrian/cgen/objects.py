@@ -113,6 +113,11 @@ class _Ptr(_Array):
     pass
 
 
+class _Void(_Type):
+    """void."""
+    pass
+
+
 class CTypes(_Object):
     """Container to ease importing."""
     int_fast8 = _IntFast8()
@@ -123,6 +128,7 @@ class CTypes(_Object):
     uint_fast64 = _UIntFast64()
     size_t = _SizeT()
     char = _Char()
+    void = _Void()
 
     @classmethod
     def ptr(cls, type_):
@@ -149,14 +155,14 @@ class StructType(_Object):
 class SizeOf(_Object):
     """sizeof operator."""
 
-    _keys = ("source", )
+    _keys = ("type_", )
 
-    def __init__(self, source):
-        self._source = source
+    def __init__(self, type_):
+        self._type = type_
 
     @property
-    def source(self):
-        return self._source
+    def type_(self):
+        return self._type
 
 
 class Val(_Object):
@@ -216,11 +222,12 @@ class Expr(_Object):
 class FuncCall(_Object):
     """Function call."""
 
-    _keys = ("name", "args")
+    _keys = ("name", "args", "includes")
 
-    def __init__(self, name, *args):
+    def __init__(self, name, *args, includes=None):
         self._name = name
         self._args = args
+        self._includes = includes or []
 
     @property
     def name(self):
@@ -229,6 +236,10 @@ class FuncCall(_Object):
     @property
     def args(self):
         return self._args
+
+    @property
+    def includes(self):
+        return self._includes
 
 
 class Decl(_Object):
@@ -240,10 +251,6 @@ class Decl(_Object):
         self._name = name
         self._type = None or type_
         self._expr = None or expr
-        # if isinstance(type_or_expr, (Val, FuncCall, Var, Expr)):
-        #     self._expr = type_or_expr
-        # else:
-        #     self._type = type_or_expr
 
     @property
     def name(self):
@@ -496,7 +503,7 @@ class CFuncDescr(_Object):
         self._includes = includes
 
     def __call__(self, *args):
-        return FuncCall(self.name, *args)
+        return FuncCall(self.name, *args, includes=self._includes)
 
     @property
     def name(self):

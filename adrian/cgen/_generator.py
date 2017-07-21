@@ -58,8 +58,8 @@ class NodeGenerator(_layers.Layer):
             self._includes.append(include_string)
 
     def add_include(self, include):
-        include_string = " ".join(["#include", include])
-        self.add_include_string(include_string)
+        self.add_include_string(
+            "#include <{}>".format(include.module_name))
 
     def type_(self, type_):
         # TODO: support other types.
@@ -67,28 +67,71 @@ class NodeGenerator(_layers.Layer):
                 objects.CTypes.int_fast8, objects.CTypes.int_fast32,
                 objects.CTypes.int_fast64, objects.CTypes.uint_fast8,
                 objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
-            self.add_include("<stdint.h>")
+            self.add_include(objects.Include("stdint.h"))
             return _CTYPE_TO_STRING[type(type_)]
+        elif isinstance(type_, objects.StructType):
+            return "struct {}".format(type_.name)
+        elif isinstance(type_, objects._Ptr):
+            # Recursively call self.type_ with ptr's "inner" type.
+            return "{}*".format(self.type_(type_.type_))
         errors.not_implemented("type is not supported")
+
+    def expr(self, expr):
+        if isinstance(expr, objects.FuncCall):
+            return self.sub_func_call(expr)
+        elif isinstance(expr, objects.SizeOf):
+            return "sizeof({})".format(self.type_(expr.type_))
+        elif isinstance(expr, objects.Var):
+            return expr.name
+        #elif isinstance(expr, objects._Ptr):
+        #    return "*{}".format(self.expr(expr.type_))
+        elif isinstance(expr, objects.StructElem):
+            struct_name = expr.struct_name
+            sep = "."
+            if isinstance(expr.struct_name, objects._Ptr):
+                sep = "->"
+                struct_name = self.expr(struct_name.type_)
+            return "{}{}{}".format(struct_name, sep, expr.elem_name)
+        errors.not_implemented("expr is not supported")
 
     def sub_decl(self, decl):
         """Generates declaration without semicolon."""
-        # TODO: support decl.expr.
-        return " ".join([
-            self.type_(decl.type_),
-            decl.name
-        ])
+        # For example, in
+        # struct MyStruct* self = malloc(sizeof(struct MyStruct))
+        # result is: struct MyStruct* self
+        # decl.expr is: malloc(sizeof(struct MyStruct))
+        result = " ".join([self.type_(decl.type_), decl.name])
+        if decl.expr:
+            result = " ".join([result, "=", self.expr(decl.expr)])
+        return result
+
+    def args(self, args):
+        return [self.sub_decl(arg) for arg in args]
+
+    def sub_func_call(self, call):
+        # Updating includes.
+        for include in call.includes:
+            self.add_include(include)
+        return "{}({})".format(call.name, ", ".join(map(self.expr, call.args)))
 
     @_layers.register(objects.Decl)
     def decl(self, decl):
         """Generates declaration with semicolon."""
         return "".join([self.sub_decl(decl), ";"])
 
+    @_layers.register(objects.Assignment)
+    def assignment(self, assmt):
+        # Currently we use self.expr, as assmt.name can be expression,
+        # e.g. self->data.
+        name = self.expr(assmt.name)
+        expr = self.expr(assmt.expr)
+        return "{} = {};".format(name, expr)
+
     @_layers.register(objects.Struct)
-    def struct(self, struct_decl):
+    def struct_decl(self, struct):
         # Generating body.
         generated_body = Generated()
-        for stmt in struct_decl.body:
+        for stmt in struct.body:
             generated_body.merge(self.generate(stmt))
 
         # Updating includes.
@@ -98,9 +141,33 @@ class NodeGenerator(_layers.Layer):
         body = "{\n" + "\n".join(generated_body.rest_code) + "\n}"
         return " ".join([
             "struct",
-            struct_decl.name,
+            struct.name,
             "".join([body, ";"])
         ])
+
+    @_layers.register(objects.Func)
+    def func_decl(self, func):
+        # Generating body.
+        generated_body = Generated()
+        for stmt in func.body:
+            generated_body.merge(self.generate(stmt))
+
+        # Updating includes.
+        for include in generated_body.includes:
+            self.add_include_string(include)
+
+        rettype = self.type_(func.rettype)
+        args = self.args(func.args)
+
+        return " ".join([
+            rettype,
+            "".join([func.name, "(", ", ".join(args), ")"]),
+            "{\n" + "\n".join(generated_body.rest_code) + "\n}"
+        ])
+
+    @_layers.register(objects.Return)
+    def return_(self, return_):
+        return "return {};".format(self.expr(return_.expr))
 
     def generate(self, node):
         node_result = self.get_registry()[node](node)
