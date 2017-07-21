@@ -1,6 +1,5 @@
 """Objects that represent C language constructions."""
 
-
 class _Object(object):
     _keys = ()  # Override in subclass.
 
@@ -86,6 +85,10 @@ class _IntFast64(_Type):
     pass
 
 
+class _SizeT(_Type):
+    """size_t"""
+    pass
+
 
 class _Char(_Type):
     """char."""
@@ -118,6 +121,7 @@ class CTypes(_Object):
     uint_fast8 = _UIntFast8()
     uint_fast32 = _UIntFast32()
     uint_fast64 = _UIntFast64()
+    size_t = _SizeT()
     char = _Char()
 
     @classmethod
@@ -127,6 +131,32 @@ class CTypes(_Object):
     @classmethod
     def array(cls, type_):
         return _Array(type_)
+
+
+class StructType(_Object):
+    """Struct type"""
+
+    _keys = ("name", )
+
+    def __init__(self, name):
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+
+class SizeOf(_Object):
+    """sizeof operator."""
+
+    _keys = ("source", )
+
+    def __init__(self, source):
+        self._source = source
+
+    @property
+    def source(self):
+        return self._source
 
 
 class Val(_Object):
