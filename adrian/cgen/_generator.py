@@ -17,6 +17,7 @@ _CTYPE_TO_STRING = {
             (objects.CTypes.uint_fast64, "uint_fast64_t"),
             (objects.CTypes.int, "int"),
             (objects.CTypes.void, "void"),
+            (objects.CTypes.char, "char"),
         ]]
 }
 
@@ -157,6 +158,12 @@ class NodeGenerator(_layers.Layer):
             return value.literal
         elif isinstance(value.type_, objects._Int):
             return value.literal
+        elif isinstance(value.type_, objects._Char):
+            return "'{}'".format(value.literal)
+        elif isinstance(value.type_, objects._Ptr):
+            ptr = value.type_
+            if isinstance(ptr.type_, objects._Char):
+                return '"{}"'.format(value.literal)
         errors.not_implemented("val is not supported")
 
     @_layers.register(objects.FuncCall)

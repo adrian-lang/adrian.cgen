@@ -28,6 +28,21 @@ class ExprTest(unittest.TestCase):
             "\n".join(list(generator.generate())))
 
 
+class FuncCallTest(unittest.TestCase):
+
+    def test_it_generates(self):
+        inp = [cgen.FuncCall(
+            "lol", cgen.Val("d", type_=cgen.CTypes.char),
+            cgen.Val("some string", type_=cgen.CTypes.ptr(cgen.CTypes.char)))]
+        generator = cgen.Generator()
+        generator.add_ast(inp)
+        self.assertEqual(
+            "\n".join([
+                "lol('d', \"some string\");"
+            ]),
+            "\n".join(list(generator.generate())))
+
+
 class StructTest(unittest.TestCase):
 
     def test_it_generates(self):
