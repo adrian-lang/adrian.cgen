@@ -76,10 +76,11 @@ class StructTest(unittest.TestCase):
             "\n".join(list(generator.generate())))
 
     def test_use_in_large_example(self):
-        inp = [
+        struct_decl = [
             cgen.Struct(
                 "MyStruct", (
-                    cgen.Decl("data", type_=cgen.CTypes.int_fast8), )),
+                    cgen.Decl("data", type_=cgen.CTypes.int_fast8), ))]
+        init_my_struct = [
             cgen.Func(
                 "initMyStruct", rettype=cgen.CTypes.ptr(cgen.StructType("MyStruct")),
                 args=(cgen.Decl("data", type_=cgen.CTypes.int_fast8), ),
@@ -92,16 +93,18 @@ class StructTest(unittest.TestCase):
                         name=cgen.StructElem(
                             cgen.CTypes.ptr(cgen.Var("self")), "data"),
                         expr=cgen.Var("data")),
-                    cgen.Return(cgen.Var("self")))),
+                    cgen.Return(cgen.Var("self"))))]
+        lol = [
             cgen.Func(
                 "lol", rettype=cgen.CTypes.ptr(cgen.StructType("MyStruct")),
                 args=(),
                 body=(
                     cgen.Return(
-                        cgen.FuncCall("initMyStruct", cgen.Val("23", type_=cgen.CTypes.int_fast8))), ))
-        ]
+                        cgen.FuncCall("initMyStruct", cgen.Val("23", type_=cgen.CTypes.int_fast8))), ))]
         generator = cgen.Generator()
-        generator.add_ast(inp)
+        generator.add_ast(struct_decl)
+        generator.add_ast(init_my_struct)
+        generator.add_ast(lol)
         self.assertEqual(
             "\n".join([
                 "#include <stdint.h>",
