@@ -85,6 +85,11 @@ class _IntFast64(_Type):
     pass
 
 
+class _Int(_Type):
+    """int."""
+    pass
+
+
 class _SizeT(_Type):
     """size_t"""
     pass
@@ -120,6 +125,7 @@ class _Void(_Type):
 
 class CTypes(_Object):
     """Container to ease importing."""
+    int = _Int()
     int_fast8 = _IntFast8()
     int_fast32 = _IntFast32()
     int_fast64 = _IntFast64()

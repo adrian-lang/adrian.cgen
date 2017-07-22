@@ -5,16 +5,31 @@ from . import _layers
 
 
 _CTYPE_TO_STRING = {
-    key: value + "_t"
+    key: value
     for key, value in [
         (type(ctype), val)
         for ctype, val in [
-            (objects.CTypes.int_fast8, "int_fast8"),
-            (objects.CTypes.int_fast32, "int_fast32"),
-            (objects.CTypes.int_fast64, "int_fast64"),
-            (objects.CTypes.uint_fast8, "uint_fast8"),
-            (objects.CTypes.uint_fast32, "uint_fast32"),
-            (objects.CTypes.uint_fast64, "uint_fast64")
+            (objects.CTypes.int_fast8, "int_fast8_t"),
+            (objects.CTypes.int_fast32, "int_fast32_t"),
+            (objects.CTypes.int_fast64, "int_fast64_t"),
+            (objects.CTypes.uint_fast8, "uint_fast8_t"),
+            (objects.CTypes.uint_fast32, "uint_fast32_t"),
+            (objects.CTypes.uint_fast64, "uint_fast64_t"),
+            (objects.CTypes.int, "int"),
+            (objects.CTypes.void, "void"),
+        ]]
+}
+
+
+_COP_TO_STRING = {
+    key: value
+    for key, value in [
+        (type(cop), val)
+        for cop, val in [
+            (objects.COps.plus, "+"),
+            (objects.COps.minus, "-"),
+            (objects.COps.star, "*"),
+            (objects.COps.slash, "/"),
         ]]
 }
 
@@ -71,6 +86,8 @@ class NodeGenerator(_layers.Layer):
                 objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
             self.add_include(objects.Include("stdint.h"))
             return _CTYPE_TO_STRING[type(type_)]
+        elif isinstance(type_, (objects._Void, objects._Int)):
+            return _CTYPE_TO_STRING[type(type_)]
         elif isinstance(type_, objects.StructType):
             return "struct {}".format(type_.name)
         elif isinstance(type_, objects._Ptr):
@@ -83,8 +100,10 @@ class NodeGenerator(_layers.Layer):
             return self.sub_func_call(expr)
         elif isinstance(expr, objects.SizeOf):
             return "sizeof({})".format(self.type_(expr.type_))
+        elif isinstance(expr, objects.Expr):
+            return self.sexpr(expr)
         elif isinstance(expr, objects.Var):
-            return expr.name
+            return self.var(expr)
         elif isinstance(expr, objects.Val):
             return self.val(expr)
         #elif isinstance(expr, objects._Ptr):
@@ -97,15 +116,6 @@ class NodeGenerator(_layers.Layer):
                 struct_name = self.expr(struct_name.type_)
             return "{}{}{}".format(struct_name, sep, expr.elem_name)
         errors.not_implemented("expr is not supported")
-
-    def val(self, value):
-        if isinstance(value.type_, tuple(map(type, (
-                objects.CTypes.int_fast8, objects.CTypes.int_fast32,
-                objects.CTypes.int_fast64, objects.CTypes.uint_fast8,
-                objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
-            self.add_include(objects.Include("stdint.h"))
-            return value.literal
-        errors.not_implemented("val is not supported")
 
     def sub_decl(self, decl):
         """Generates declaration without semicolon."""
@@ -126,6 +136,32 @@ class NodeGenerator(_layers.Layer):
         for include in call.includes:
             self.add_include(include)
         return "{}({})".format(call.name, ", ".join(map(self.expr, call.args)))
+
+    @_layers.register(objects.Expr)
+    def sexpr(self, expr):
+        return "{} {} {}".format(
+            self.expr(expr.expr1), _COP_TO_STRING[type(expr.op)],
+            self.expr(expr.expr2))
+
+    @_layers.register(objects.Var)
+    def var(self, variable):
+        return variable.name
+
+    @_layers.register(objects.Val)
+    def val(self, value):
+        if isinstance(value.type_, tuple(map(type, (
+                objects.CTypes.int_fast8, objects.CTypes.int_fast32,
+                objects.CTypes.int_fast64, objects.CTypes.uint_fast8,
+                objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
+            self.add_include(objects.Include("stdint.h"))
+            return value.literal
+        elif isinstance(value.type_, objects._Int):
+            return value.literal
+        errors.not_implemented("val is not supported")
+
+    @_layers.register(objects.FuncCall)
+    def func_call(self, call):
+        return "{};".format(self.sub_func_call(call))
 
     @_layers.register(objects.Decl)
     def decl(self, decl):

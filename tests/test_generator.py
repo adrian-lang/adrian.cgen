@@ -10,6 +10,24 @@ malloc_func = cgen.CFuncDescr(
     includes=[stdlib_incl])
 
 
+class ExprTest(unittest.TestCase):
+
+    def test_it_generates(self):
+        inp = [cgen.Expr(
+            cgen.COps.plus, cgen.Val("1", type_=cgen.CTypes.int),
+            cgen.Expr(cgen.COps.star, cgen.Val("3", type_=cgen.CTypes.int),
+            cgen.Expr(cgen.COps.minus, cgen.Val("5", type_=cgen.CTypes.int),
+            cgen.Expr(cgen.COps.slash, cgen.Val("8", type_=cgen.CTypes.int),
+                cgen.Val("4", type_=cgen.CTypes.int)))))]
+        generator = cgen.Generator()
+        generator.add_ast(inp)
+        self.assertEqual(
+            "\n".join([
+                "1 + 3 * 5 - 8 / 4"
+            ]),
+            "\n".join(list(generator.generate())))
+
+
 class StructTest(unittest.TestCase):
 
     def test_it_generates(self):
