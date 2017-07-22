@@ -1,6 +1,7 @@
 from . import errors
 from .objects import *  # noqa: F401,F403
 from ._generator import *
+from .utils import make_main0
 
 
 CheckError = errors.CheckError
