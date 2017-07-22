@@ -100,8 +100,8 @@ class _Char(_Type):
     pass
 
 
-class _Array(_Type):
-    """C array."""
+class _Ptr(_Type):
+    """Pointer."""
 
     _keys = ("type_", )
 
@@ -113,9 +113,25 @@ class _Array(_Type):
         return self._type
 
 
-class _Ptr(_Array):
-    """Pointer."""
-    pass
+class _Array(_Type):
+    """C Array."""
+
+    _keys = ("type_", "size")
+
+    def __init__(self, type_, size=None):
+        self._type = type_
+        assert type(size) in (int, str) or size is None
+        if isinstance(size, str):
+            assert size == "auto"
+        self._size = size
+
+    @property
+    def type_(self):
+        return self._type
+
+    @property
+    def size(self):
+        return self._size
 
 
 class _Void(_Type):
@@ -141,8 +157,8 @@ class CTypes(_Object):
         return _Ptr(type_)
 
     @classmethod
-    def array(cls, type_):
-        return _Array(type_)
+    def array(cls, type_, size=None):
+        return _Array(type_, size=size)
 
 
 class StructType(_Object):

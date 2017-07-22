@@ -10,6 +10,46 @@ malloc_func = cgen.CFuncDescr(
     includes=[stdlib_incl])
 
 
+class DeclTest(unittest.TestCase):
+
+    def test_no_size(self):
+        inp = [cgen.Decl(
+            "a", type_=cgen.CTypes.array(cgen.CTypes.int),
+            expr=cgen.Val((cgen.Val("0", type_=cgen.CTypes.int), cgen.Val("1", cgen.CTypes.int)),
+                cgen.CTypes.array(cgen.CTypes.int)))]
+        generator = cgen.Generator()
+        generator.add_ast(inp)
+        self.assertEqual(
+            "\n".join([
+                "int a[] = {0, 1};"
+            ]),
+            "\n".join(list(generator.generate())))
+
+    def test_explicit_size(self):
+        inp = [cgen.Decl(
+            "a", type_=cgen.CTypes.array(cgen.CTypes.int, size=20))]
+        generator = cgen.Generator()
+        generator.add_ast(inp)
+        self.assertEqual(
+            "\n".join([
+                "int a[20];"
+            ]),
+            "\n".join(list(generator.generate())))
+
+    def test_auto_size(self):
+        inp = [cgen.Decl(
+            "a", type_=cgen.CTypes.array(cgen.CTypes.int, size="auto"),
+            expr=cgen.Val((cgen.Val("0", type_=cgen.CTypes.int), cgen.Val("1", cgen.CTypes.int)),
+                cgen.CTypes.array(cgen.CTypes.int)))]
+        generator = cgen.Generator()
+        generator.add_ast(inp)
+        self.assertEqual(
+            "\n".join([
+                "int a[2] = {0, 1};"
+            ]),
+            "\n".join(list(generator.generate())))
+
+
 class ExprTest(unittest.TestCase):
 
     def test_it_generates(self):

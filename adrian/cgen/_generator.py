@@ -94,6 +94,9 @@ class NodeGenerator(_layers.Layer):
         elif isinstance(type_, objects._Ptr):
             # Recursively call self.type_ with ptr's "inner" type.
             return "{}*".format(self.type_(type_.type_))
+        elif isinstance(type_, objects._Array):
+            # Recursively call self.type_ with array's "inner" type.
+            return self.type_(type_.type_)
         errors.not_implemented("type is not supported")
 
     def expr(self, expr):
@@ -124,7 +127,17 @@ class NodeGenerator(_layers.Layer):
         # struct MyStruct* self = malloc(sizeof(struct MyStruct))
         # result is: struct MyStruct* self
         # decl.expr is: malloc(sizeof(struct MyStruct))
-        result = " ".join([self.type_(decl.type_), decl.name])
+        result = "{} {}".format(self.type_(decl.type_), decl.name)
+        # If it is an array, add size of array (or at least square brackets).
+        if isinstance(decl.type_, objects._Array):
+            orig_size = decl.type_.size
+            if orig_size is None:
+                size = ""
+            elif isinstance(orig_size, int):
+                size = str(orig_size)
+            elif orig_size == "auto":
+                size = str(len(decl.expr.literal))
+            result = "".join([result, "[", size, "]"])
         if decl.expr:
             result = " ".join([result, "=", self.expr(decl.expr)])
         return result
@@ -164,6 +177,9 @@ class NodeGenerator(_layers.Layer):
             ptr = value.type_
             if isinstance(ptr.type_, objects._Char):
                 return '"{}"'.format(value.literal)
+        elif isinstance(value.type_, objects._Array):
+            return "{{{}}}".format(
+                ", ".join([self.expr(subexpr) for subexpr in value.literal]))
         errors.not_implemented("val is not supported")
 
     @_layers.register(objects.FuncCall)
