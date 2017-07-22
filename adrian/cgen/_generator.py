@@ -115,12 +115,13 @@ class NodeGenerator(_layers.Layer):
         #elif isinstance(expr, objects._Ptr):
         #    return "*{}".format(self.expr(expr.type_))
         elif isinstance(expr, objects.StructElem):
-            struct_name = expr.struct_name
-            sep = "."
             if isinstance(expr.struct_name, objects._Ptr):
                 sep = "->"
-                struct_name = self.expr(struct_name.type_)
-            return "{}{}{}".format(struct_name, sep, expr.elem_name)
+                struct_name = self.expr(expr.struct_name.type_)
+            else:
+                sep = "."
+                struct_name = self.expr(expr.struct_name)
+            return "{}{}{}".format(struct_name, sep, self.expr(expr.elem_name))
         errors.not_implemented("expr is not supported")
 
     def sub_decl(self, decl):

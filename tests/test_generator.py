@@ -64,6 +64,18 @@ class AssignmentTest(unittest.TestCase):
             ]),
             "\n".join(list(generator.generate())))
 
+    def test_struct_elem(self):
+        inp = [cgen.Assignment(
+            cgen.StructElem(cgen.Var("self"), cgen.Var("data")),
+            cgen.Var("data"))]
+        generator = cgen.Generator()
+        generator.add_ast(inp)
+        self.assertEqual(
+            "\n".join([
+                "self.data = data;"
+            ]),
+            "\n".join(list(generator.generate())))
+
 
 class ExprTest(unittest.TestCase):
 
@@ -127,7 +139,7 @@ class StructTest(unittest.TestCase):
                         expr=malloc_func(cgen.SizeOf(cgen.StructType("MyStruct")))),
                     cgen.Assignment(
                         name=cgen.StructElem(
-                            cgen.CTypes.ptr(cgen.Var("self")), "data"),
+                            cgen.CTypes.ptr(cgen.Var("self")), cgen.Var("data")),
                         expr=cgen.Var("data")),
                     cgen.Return(cgen.Var("self"))))]
         generator = cgen.Generator()
@@ -179,7 +191,7 @@ class StructTest(unittest.TestCase):
                         expr=malloc_func(cgen.SizeOf(cgen.StructType("MyStruct")))),
                     cgen.Assignment(
                         name=cgen.StructElem(
-                            cgen.CTypes.ptr(cgen.Var("self")), "data"),
+                            cgen.CTypes.ptr(cgen.Var("self")), cgen.Var("data")),
                         expr=cgen.Var("data")),
                     cgen.Return(cgen.Var("self"))))]
         lol = [
