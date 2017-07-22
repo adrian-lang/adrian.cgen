@@ -50,6 +50,21 @@ class DeclTest(unittest.TestCase):
             "\n".join(list(generator.generate())))
 
 
+class AssignmentTest(unittest.TestCase):
+
+    def test_array_elem_by_index(self):
+        inp = [cgen.Assignment(
+            cgen.ArrayElemByIndex("a", cgen.Val("0", type_=cgen.CTypes.int)),
+            cgen.Val("1", type_=cgen.CTypes.int))]
+        generator = cgen.Generator()
+        generator.add_ast(inp)
+        self.assertEqual(
+            "\n".join([
+                "a[0] = 1;"
+            ]),
+            "\n".join(list(generator.generate())))
+
+
 class ExprTest(unittest.TestCase):
 
     def test_it_generates(self):
@@ -63,7 +78,7 @@ class ExprTest(unittest.TestCase):
         generator.add_ast(inp)
         self.assertEqual(
             "\n".join([
-                "1 + 3 * 5 - 8 / 4"
+                "1 + 3 * 5 - 8 / 4;"
             ]),
             "\n".join(list(generator.generate())))
 
