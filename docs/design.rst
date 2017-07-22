@@ -312,7 +312,7 @@ Function
         rettype=CTypes.int,
         args=(Decl("a", CTypes.int), Decl("b", CTypes.int)),
         body=(
-            Return(Expr(COps.plus, Var("a"), Val("b"))), ))
+            Return(Expr(COps.plus, Var("a"), Var("b"))), ))
 
 Should we split this to support function prototypes?
 
