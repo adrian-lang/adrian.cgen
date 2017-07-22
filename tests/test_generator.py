@@ -54,6 +54,25 @@ class StructTest(unittest.TestCase):
             ]),
             "\n".join(list(generator.generate())))
 
+    def test_use_in_simple_function(self):
+        inp = [
+            cgen.Func(
+                "lol", rettype=cgen.CTypes.ptr(cgen.StructType("MyStruct")),
+                args=(),
+                body=(
+                    cgen.Return(
+                        cgen.FuncCall("initMyStruct", cgen.Val("23", type_=cgen.CTypes.int_fast8))), ))]
+        generator = cgen.Generator()
+        generator.add_ast(inp)
+        self.assertEqual(
+            "\n".join([
+                "#include <stdint.h>",
+                "struct MyStruct* lol() {",
+                "return initMyStruct(23);",
+                "}"
+            ]),
+            "\n".join(list(generator.generate())))
+
 
 if __name__ == "__main__":
     unittest.main()
