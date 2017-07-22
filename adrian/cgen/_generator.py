@@ -32,7 +32,7 @@ class Generated:
             yield line
 
     def _merge_includes(self, includes):
-        for include in includes:
+        for include in sorted(includes):
             if include not in self.includes:
                 self.includes.append(include)
 
@@ -51,7 +51,9 @@ class Generated:
 
 
 class NodeGenerator(_layers.Layer):
-    _includes = []
+
+    def __init__(self):
+        self._includes = []
 
     def add_include_string(self, include_string):
         if include_string not in self._includes:
@@ -83,6 +85,8 @@ class NodeGenerator(_layers.Layer):
             return "sizeof({})".format(self.type_(expr.type_))
         elif isinstance(expr, objects.Var):
             return expr.name
+        elif isinstance(expr, objects.Val):
+            return self.val(expr)
         #elif isinstance(expr, objects._Ptr):
         #    return "*{}".format(self.expr(expr.type_))
         elif isinstance(expr, objects.StructElem):
@@ -93,6 +97,15 @@ class NodeGenerator(_layers.Layer):
                 struct_name = self.expr(struct_name.type_)
             return "{}{}{}".format(struct_name, sep, expr.elem_name)
         errors.not_implemented("expr is not supported")
+
+    def val(self, value):
+        if isinstance(value.type_, tuple(map(type, (
+                objects.CTypes.int_fast8, objects.CTypes.int_fast32,
+                objects.CTypes.int_fast64, objects.CTypes.uint_fast8,
+                objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
+            self.add_include(objects.Include("stdint.h"))
+            return value.literal
+        errors.not_implemented("val is not supported")
 
     def sub_decl(self, decl):
         """Generates declaration without semicolon."""
