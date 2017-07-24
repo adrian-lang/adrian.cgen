@@ -12,12 +12,14 @@ class LibcTest(CgenTestCase):
             Decl(
                 "chunk", type_=CTypes.ptr(CTypes.void),
                 expr=libc.malloc(Val(chunk_size, type_=CTypes.size_t))),
-            libc.free(Var("chunk")))  # yeah, no NULL check :)
+            libc.free(Var("chunk")),  # yeah, no NULL check :)
+            Return(Val(0, type_=CTypes.int)))
         expected = (
             "#include <stdlib.h>",
             "int main(void) {",
             "void* chunk = malloc(1645);",
             "free(chunk);",
+            "return 0;",
             "}")
         self.check_gen([[main_func]], expected)
 
