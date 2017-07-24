@@ -1,18 +1,10 @@
-import unittest
-
 from adrian.cgen import (
-    Generator, SizeOf, Decl, Val, Var, CTypes, make_main0, libc)
+    SizeOf, Decl, Val, Var, CTypes, make_main0, libc)
+
+from testutils import CgenTestCase
 
 
-class LibcTest(unittest.TestCase):
-
-    def check_gen(self, asts, expected_lines):
-        gen = Generator()
-        for ast in asts:
-            gen.add_ast(ast)
-        self.assertEqual(
-            "\n".join(expected_lines),
-            "\n".join(gen.generate()))
+class LibcTest(CgenTestCase):
 
     def test_malloc_and_free_in_main(self):
         chunk_size = 1645
