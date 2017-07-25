@@ -108,7 +108,7 @@ class NodeGenerator(_layers.Layer):
         elif isinstance(type_, objects._File):
             self.add_include(includes.stdio)
             return _CTYPE_TO_STRING[type(type_)]
-        errors.not_implemented("type is not supported")
+        errors.not_implemented("type is not supported")  # pragma: no cover
 
     def expr(self, expr):
         if isinstance(expr, objects.FuncCall):
@@ -137,7 +137,7 @@ class NodeGenerator(_layers.Layer):
             return "{}{}{}".format(struct_name, sep, self.expr(expr.elem_name))
         elif expr is objects.Null:
             return "NULL"
-        errors.not_implemented("expr is not supported")
+        errors.not_implemented("expr is not supported")  # pragma: no cover
 
     def sub_decl(self, decl):
         """Generates declaration without semicolon."""
@@ -155,6 +155,9 @@ class NodeGenerator(_layers.Layer):
                 size = str(orig_size)
             elif orig_size == "auto":
                 size = str(len(decl.expr.literal))
+            else:
+                errors.not_implemented(  # pragma: no cover
+                    "unsupported array size")
             result = "".join([result, "[", size, "]"])
         if decl.expr:
             result = " ".join([result, "=", self.expr(decl.expr)])
@@ -222,7 +225,7 @@ class NodeGenerator(_layers.Layer):
         elif isinstance(value.type_, objects._Array):
             return "{{{}}}".format(
                 ", ".join([self.expr(subexpr) for subexpr in value.literal]))
-        errors.not_implemented("val is not supported")
+        errors.not_implemented("val is not supported")  # pragma: no cover
 
     @_layers.register(objects.Val)
     def val(self, value):
