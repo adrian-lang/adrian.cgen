@@ -183,3 +183,12 @@ class FileTest(CgenTestCase):
             "#include <stdio.h>",
             "FILE* f;")
         self.check_gen([[decl]], expected)
+
+    def test_with_ptr_and_value_in_declaration(self):
+        decl = cgen.Decl(
+            "f", type_=cgen.CTypes.ptr(cgen.CTypes.file),
+            expr=cgen.Null)
+        expected = (
+            "#include <stdio.h>",
+            "FILE* f = NULL;")
+        self.check_gen([[decl]], expected)

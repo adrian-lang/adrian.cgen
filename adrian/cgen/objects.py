@@ -229,6 +229,12 @@ class SizeOf(_Object):
         return self._type
 
 
+class Null(_Object):
+    """NULL macro."""
+
+    _keys = ()
+
+
 class Val(_Object):
     """Value of any kind."""
 

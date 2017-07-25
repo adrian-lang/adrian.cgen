@@ -1,5 +1,6 @@
 from adrian.cgen import (
-    SizeOf, Decl, Val, Var, Expr, Return, CTypes, COps, make_main0, libc)
+    SizeOf, Decl, Val, Var, Null, Expr, Return, CTypes, COps,
+    make_main0, libc)
 
 from testutils import CgenTestCase
 
@@ -29,8 +30,7 @@ class LibcTest(CgenTestCase):
             Decl(
                 var_name, type_=CTypes.ptr(CTypes.void),
                 expr=libc.malloc(Val(10, type_=CTypes.size_t))),
-            libc.assert_(   # TODO: fix type for NULL
-                Expr(COps.neq, Var(var_name), Var("NULL"))),
+            libc.assert_(Expr(COps.neq, Var(var_name), Null)),
             libc.free(Var(var_name)),
             Return(Val(0, type_=CTypes.int)))
         expected = (

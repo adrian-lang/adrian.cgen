@@ -134,6 +134,8 @@ class NodeGenerator(_layers.Layer):
                 sep = "."
                 struct_name = self.expr(expr.struct_name)
             return "{}{}{}".format(struct_name, sep, self.expr(expr.elem_name))
+        elif expr is objects.Null:
+            return "NULL"
         errors.not_implemented("expr is not supported")
 
     def sub_decl(self, decl):
