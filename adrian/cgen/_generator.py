@@ -210,7 +210,7 @@ class NodeGenerator(_layers.Layer):
                 objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
             self.add_include(objects.Include("stdint.h"))
             return value.literal
-        elif isinstance(value.type_, (objects._Int, objects._SizeT)):
+        elif isinstance(value.type_, (objects._Int, objects._Size)):
             return str(value.literal)
         elif isinstance(value.type_, objects._Char):
             return "'{}'".format(value.literal)

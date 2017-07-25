@@ -8,7 +8,7 @@ from testutils import CgenTestCase
 stdlib_incl = cgen.Include("stdlib.h")
 malloc_func = cgen.CFuncDescr(
     name="malloc", rettype=cgen.CTypes.ptr(cgen.CTypes.void),
-    args=(cgen.CTypes.size_t, ),
+    args=(cgen.CTypes.size, ),
     includes=[stdlib_incl])
 
 

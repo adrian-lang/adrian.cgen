@@ -127,7 +127,7 @@ class _Int(_Type):
     pass
 
 
-class _SizeT(_Type):
+class _Size(_Type):
     """size_t"""
     pass
 
@@ -189,7 +189,7 @@ class CTypes(_Object):
     uint_fast8 = _UIntFast8()
     uint_fast32 = _UIntFast32()
     uint_fast64 = _UIntFast64()
-    size_t = _SizeT()
+    size = _Size()
     char = _Char()
     void = _Void()
     file = _File()

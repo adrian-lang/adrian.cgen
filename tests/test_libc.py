@@ -12,7 +12,7 @@ class LibcTest(CgenTestCase):
         main_func = make_main0(
             Decl(
                 "chunk", type_=CTypes.ptr(CTypes.void),
-                expr=libc.malloc(Val(chunk_size, type_=CTypes.size_t))),
+                expr=libc.malloc(Val(chunk_size, type_=CTypes.size))),
             libc.free(Var("chunk")),  # yeah, no NULL check :)
             Return(Val(0, type_=CTypes.int)))
         expected = (
@@ -29,7 +29,7 @@ class LibcTest(CgenTestCase):
         main_func = make_main0(
             Decl(
                 var_name, type_=CTypes.ptr(CTypes.void),
-                expr=libc.malloc(Val(10, type_=CTypes.size_t))),
+                expr=libc.malloc(Val(10, type_=CTypes.size))),
             libc.assert_(Expr(COps.neq, Var(var_name), Null)),
             libc.free(Var(var_name)),
             Return(Val(0, type_=CTypes.int)))

@@ -7,7 +7,7 @@ _stdio = Include("stdio.h")
 
 malloc = CFuncDescr(
     "malloc", rettype=CTypes.ptr(CTypes.void),
-    args=(CTypes.size_t, ),
+    args=(CTypes.size, ),
     includes=[_stdlib])
 
 free = CFuncDescr(
