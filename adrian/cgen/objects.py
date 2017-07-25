@@ -586,8 +586,8 @@ class CFuncDescr(_Object):
         return self._includes
 
 
-class CVarDescr(_Object):
-    """Definition of C variable or constant for FFI."""
+class CNameDescr(_Object):
+    """Definition of C name for FFI."""
 
     _keys = ("name", "type_", "includes")
 
