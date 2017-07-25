@@ -1,5 +1,6 @@
 from . import errors
 from . import objects
+from . import includes
 from . import _context
 from . import _layers
 
@@ -92,7 +93,7 @@ class NodeGenerator(_layers.Layer):
                 objects.CTypes.int_fast8, objects.CTypes.int_fast32,
                 objects.CTypes.int_fast64, objects.CTypes.uint_fast8,
                 objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
-            self.add_include(objects.Include("stdint.h"))
+            self.add_include(includes.stdint)
             return _CTYPE_TO_STRING[type(type_)]
         elif isinstance(type_, (objects._Void, objects._Int)):
             return _CTYPE_TO_STRING[type(type_)]
@@ -105,7 +106,7 @@ class NodeGenerator(_layers.Layer):
             # Recursively call self.type_ with array's "inner" type.
             return self.type_(type_.type_)
         elif isinstance(type_, objects._File):
-            self.add_include(objects.Include("stdio.h"))
+            self.add_include(includes.stdio)
             return _CTYPE_TO_STRING[type(type_)]
         errors.not_implemented("type is not supported")
 
@@ -208,7 +209,7 @@ class NodeGenerator(_layers.Layer):
                 objects.CTypes.int_fast8, objects.CTypes.int_fast32,
                 objects.CTypes.int_fast64, objects.CTypes.uint_fast8,
                 objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
-            self.add_include(objects.Include("stdint.h"))
+            self.add_include(includes.stdint)
             return value.literal
         elif isinstance(value.type_, (objects._Int, objects._Size)):
             return str(value.literal)
