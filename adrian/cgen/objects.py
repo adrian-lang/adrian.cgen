@@ -40,12 +40,49 @@ class _Slash(_Op):
     pass
 
 
+class _Eq(_Op):
+    """==."""
+    pass
+
+
+class _Neq(_Op):
+    """!=."""
+    pass
+
+
+class _Lt(_Op):
+    """<."""
+    pass
+
+
+class _Gt(_Op):
+    """>."""
+    pass
+
+
+class _Lte(_Op):
+    """<=."""
+    pass
+
+
+class _Gte(_Op):
+    """>=."""
+    pass
+
+
 class COps(_Object):
     """Container."""
     plus = _Plus()
     minus = _Minus()
     star = _Star()
     slash = _Slash()
+
+    eq = _Eq()
+    neq = _Neq()
+    lt = _Lt()
+    gt = _Gt()
+    lte = _Lte()
+    gte = _Gte()
 
 
 class _Type(_Object):

@@ -31,6 +31,12 @@ _COP_TO_STRING = {
             (objects.COps.minus, "-"),
             (objects.COps.star, "*"),
             (objects.COps.slash, "/"),
+            (objects.COps.eq, "=="),
+            (objects.COps.neq, "!="),
+            (objects.COps.lt, "<"),
+            (objects.COps.gt, ">"),
+            (objects.COps.gte, ">="),
+            (objects.COps.lte, "<=")
         ]]
 }
 
