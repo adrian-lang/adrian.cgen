@@ -166,7 +166,3 @@ class StructTest(CgenTestCase):
             "return initMyStruct(23);",
             "}")
         self.check_gen([struct_decl, init_my_struct, lol], expected)
-
-
-if __name__ == "__main__":
-    unittest.main()
