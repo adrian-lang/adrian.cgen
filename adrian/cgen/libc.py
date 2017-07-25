@@ -1,7 +1,8 @@
-from adrian.cgen import Include, CFuncDescr, CTypes
+from adrian.cgen import Include, CFuncDescr, CNameDescr, CTypes
 
 
 _stdlib = Include("stdlib.h")
+_stdio = Include("stdio.h")
 
 
 malloc = CFuncDescr(
@@ -22,3 +23,14 @@ assert_ = CFuncDescr(
     "assert", rettype=CTypes.void,
     args=(CTypes.int, ),
     includes=[Include("assert.h")])
+
+
+stdout = CNameDescr(
+    "stdout", type_=CTypes.ptr(CTypes.file), includes=[_stdio])
+stderr = CNameDescr(
+    "stderr", type_=CTypes.ptr(CTypes.file), includes=[_stdio])
+
+fputs = CFuncDescr(
+    "fputs", rettype=CTypes.int,
+    args=(CTypes.ptr(CTypes.char), CTypes.ptr(CTypes.file)),
+    includes=[_stdio])

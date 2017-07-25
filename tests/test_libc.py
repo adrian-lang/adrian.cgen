@@ -43,3 +43,27 @@ class LibcTest(CgenTestCase):
             "return 0;",
             "}")
         self.check_gen([[main_func]], expected)
+
+    def test_fputs(self):
+        for name, stream in (
+                ("stdout", libc.stdout),
+                ("stderr", libc.stderr)):
+            with self.subTest(stream=stream):
+                main_func = make_main0(
+                    Decl(
+                        "res", type_=CTypes.int,
+                        expr=libc.fputs(
+                            Val("test", type_=CTypes.ptr(CTypes.char)),
+                            stream)),
+                    libc.assert_(
+                        Expr(COps.gte, Var("res"), Val(0, type_=CTypes.int))),
+                    Return(Val(0, type_=CTypes.int)))
+                expected = (
+                    "#include <assert.h>",
+                    "#include <stdio.h>",
+                    "int main(void) {",
+                    "int res = fputs(\"test\", {});".format(name),
+                    "assert(res >= 0);",
+                    "return 0;",
+                    "}")
+                self.check_gen([[main_func]], expected)
