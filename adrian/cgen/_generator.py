@@ -18,6 +18,7 @@ _CTYPE_TO_STRING = {
             (objects.CTypes.int, "int"),
             (objects.CTypes.void, "void"),
             (objects.CTypes.char, "char"),
+            (objects.CTypes.file, "FILE"),
         ]]
 }
 
@@ -103,6 +104,9 @@ class NodeGenerator(_layers.Layer):
         elif isinstance(type_, objects._Array):
             # Recursively call self.type_ with array's "inner" type.
             return self.type_(type_.type_)
+        elif isinstance(type_, objects._File):
+            self.add_include(objects.Include("stdio.h"))
+            return _CTYPE_TO_STRING[type(type_)]
         errors.not_implemented("type is not supported")
 
     def expr(self, expr):

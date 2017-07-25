@@ -168,5 +168,18 @@ class StructTest(CgenTestCase):
         self.check_gen([struct_decl, init_my_struct, lol], expected)
 
 
-if __name__ == "__main__":
-    unittest.main()
+class FileTest(CgenTestCase):
+
+    def test_in_declaration(self):
+        decl = cgen.Decl("something", type_=cgen.CTypes.file)
+        expected = (
+            "#include <stdio.h>",
+            "FILE something;")
+        self.check_gen([[decl]], expected)
+
+    def test_with_ptr_in_declaration(self):
+        decl = cgen.Decl("f", type_=cgen.CTypes.ptr(cgen.CTypes.file))
+        expected = (
+            "#include <stdio.h>",
+            "FILE* f;")
+        self.check_gen([[decl]], expected)
