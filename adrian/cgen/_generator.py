@@ -122,6 +122,8 @@ class NodeGenerator(_layers.Layer):
             return self.sub_val(expr)
         elif isinstance(expr, objects.ArrayElemByIndex):
             return self.sub_array_elem_by_index(expr)
+        elif isinstance(expr, objects.CNameDescr):
+            return self.sub_name_descr(expr)
         #elif isinstance(expr, objects._Ptr):
         #    return "*{}".format(self.expr(expr.type_))
         elif isinstance(expr, objects.StructElem):
@@ -160,11 +162,21 @@ class NodeGenerator(_layers.Layer):
             return ["void"]
         return [self.sub_decl(arg) for arg in args]
 
-    def sub_func_call(self, call):
-        # Updating includes.
-        for include in call.includes:
+    def update_includes(self, includes):
+        for include in includes:
             self.add_include(include)
+
+    def sub_func_call(self, call):
+        self.update_includes(call.includes)
         return "{}({})".format(call.name, ", ".join(map(self.expr, call.args)))
+
+    def sub_name_descr(self, descr):
+        self.update_includes(descr.includes)
+        return "{}".format(descr.name)
+
+    @_layers.register(objects.CNameDescr)
+    def name_descr(self, descr):
+        return "{};".format(self.sub_name_descr(descr))
 
     def sub_array_elem_by_index(self, expr):
         return "{}[{}]".format(expr.name, self.expr(expr.index))
