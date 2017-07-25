@@ -176,6 +176,10 @@ class _Void(_Type):
     pass
 
 
+class _File(_Type):
+    """FILE."""
+
+
 class CTypes(_Object):
     """Container to ease importing."""
     int = _Int()
@@ -188,6 +192,7 @@ class CTypes(_Object):
     size_t = _SizeT()
     char = _Char()
     void = _Void()
+    file = _File()
 
     @classmethod
     def ptr(cls, type_):
