@@ -1,5 +1,6 @@
 from . import errors
 from . import objects
+from . import includes
 from . import _context
 from . import _layers
 
@@ -92,7 +93,7 @@ class NodeGenerator(_layers.Layer):
                 objects.CTypes.int_fast8, objects.CTypes.int_fast32,
                 objects.CTypes.int_fast64, objects.CTypes.uint_fast8,
                 objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
-            self.add_include(objects.Include("stdint.h"))
+            self.add_include(includes.stdint)
             return _CTYPE_TO_STRING[type(type_)]
         elif isinstance(type_, (objects._Void, objects._Int)):
             return _CTYPE_TO_STRING[type(type_)]
@@ -105,9 +106,9 @@ class NodeGenerator(_layers.Layer):
             # Recursively call self.type_ with array's "inner" type.
             return self.type_(type_.type_)
         elif isinstance(type_, objects._File):
-            self.add_include(objects.Include("stdio.h"))
+            self.add_include(includes.stdio)
             return _CTYPE_TO_STRING[type(type_)]
-        errors.not_implemented("type is not supported")
+        errors.not_implemented("type is not supported")  # pragma: no cover
 
     def expr(self, expr):
         if isinstance(expr, objects.FuncCall):
@@ -134,7 +135,9 @@ class NodeGenerator(_layers.Layer):
                 sep = "."
                 struct_name = self.expr(expr.struct_name)
             return "{}{}{}".format(struct_name, sep, self.expr(expr.elem_name))
-        errors.not_implemented("expr is not supported")
+        elif expr is objects.Null:
+            return "NULL"
+        errors.not_implemented("expr is not supported")  # pragma: no cover
 
     def sub_decl(self, decl):
         """Generates declaration without semicolon."""
@@ -152,6 +155,9 @@ class NodeGenerator(_layers.Layer):
                 size = str(orig_size)
             elif orig_size == "auto":
                 size = str(len(decl.expr.literal))
+            else:
+                errors.not_implemented(  # pragma: no cover
+                    "unsupported array size")
             result = "".join([result, "[", size, "]"])
         if decl.expr:
             result = " ".join([result, "=", self.expr(decl.expr)])
@@ -206,9 +212,9 @@ class NodeGenerator(_layers.Layer):
                 objects.CTypes.int_fast8, objects.CTypes.int_fast32,
                 objects.CTypes.int_fast64, objects.CTypes.uint_fast8,
                 objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
-            self.add_include(objects.Include("stdint.h"))
+            self.add_include(includes.stdint)
             return value.literal
-        elif isinstance(value.type_, (objects._Int, objects._SizeT)):
+        elif isinstance(value.type_, (objects._Int, objects._Size)):
             return str(value.literal)
         elif isinstance(value.type_, objects._Char):
             return "'{}'".format(value.literal)
@@ -219,7 +225,7 @@ class NodeGenerator(_layers.Layer):
         elif isinstance(value.type_, objects._Array):
             return "{{{}}}".format(
                 ", ".join([self.expr(subexpr) for subexpr in value.literal]))
-        errors.not_implemented("val is not supported")
+        errors.not_implemented("val is not supported")  # pragma: no cover
 
     @_layers.register(objects.Val)
     def val(self, value):

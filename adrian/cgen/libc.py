@@ -1,18 +1,15 @@
-from adrian.cgen import Include, CFuncDescr, CTypes
-
-
-_stdlib = Include("stdlib.h")
+from adrian.cgen import CFuncDescr, CNameDescr, CTypes, includes
 
 
 malloc = CFuncDescr(
     "malloc", rettype=CTypes.ptr(CTypes.void),
-    args=(CTypes.size_t, ),
-    includes=[_stdlib])
+    args=(CTypes.size, ),
+    includes=[includes.stdlib])
 
 free = CFuncDescr(
     "free", rettype=CTypes.void,
     args=(CTypes.ptr(CTypes.void), ),
-    includes=[_stdlib])
+    includes=[includes.stdlib])
 
 
 # According to http://man7.org/linux/man-pages/man3/assert.3.html:
@@ -21,4 +18,15 @@ free = CFuncDescr(
 assert_ = CFuncDescr(
     "assert", rettype=CTypes.void,
     args=(CTypes.int, ),
-    includes=[Include("assert.h")])
+    includes=[includes.assert_])
+
+
+stdout = CNameDescr(
+    "stdout", type_=CTypes.ptr(CTypes.file), includes=[includes.stdio])
+stderr = CNameDescr(
+    "stderr", type_=CTypes.ptr(CTypes.file), includes=[includes.stdio])
+
+fputs = CFuncDescr(
+    "fputs", rettype=CTypes.int,
+    args=(CTypes.ptr(CTypes.char), CTypes.ptr(CTypes.file)),
+    includes=[includes.stdio])

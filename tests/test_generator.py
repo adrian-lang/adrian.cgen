@@ -8,7 +8,7 @@ from testutils import CgenTestCase
 stdlib_incl = cgen.Include("stdlib.h")
 malloc_func = cgen.CFuncDescr(
     name="malloc", rettype=cgen.CTypes.ptr(cgen.CTypes.void),
-    args=(cgen.CTypes.size_t, ),
+    args=(cgen.CTypes.size, ),
     includes=[stdlib_incl])
 
 
@@ -182,4 +182,13 @@ class FileTest(CgenTestCase):
         expected = (
             "#include <stdio.h>",
             "FILE* f;")
+        self.check_gen([[decl]], expected)
+
+    def test_with_ptr_and_value_in_declaration(self):
+        decl = cgen.Decl(
+            "f", type_=cgen.CTypes.ptr(cgen.CTypes.file),
+            expr=cgen.Null)
+        expected = (
+            "#include <stdio.h>",
+            "FILE* f = NULL;")
         self.check_gen([[decl]], expected)
