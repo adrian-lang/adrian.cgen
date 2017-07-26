@@ -67,3 +67,46 @@ class LibcTest(CgenTestCase):
                     "return 0;",
                     "}")
                 self.check_gen([[main_func]], expected)
+
+    def test_fflush_non_null_stream(self):
+        main_func = make_main0(
+            libc.fputs(
+                Val("some things here", type_=CTypes.ptr(CTypes.char)),
+                libc.stdout),
+            Decl(
+                "res", type_=CTypes.int, expr=libc.fflush(libc.stdout)),
+            libc.assert_(Expr(COps.eq, Var("res"), Val(0, type_=CTypes.int))),
+            Return(Val(0, type_=CTypes.int)))
+        expected = (
+            "#include <assert.h>",
+            "#include <stdio.h>",
+            "int main(void) {",
+            "fputs(\"some things here\", stdout);",
+            "int res = fflush(stdout);",
+            "assert(res == 0);",
+            "return 0;",
+            "}")
+        self.check_gen([[main_func]], expected)
+
+    def test_fflush_null_stream(self):
+        # http://man7.org/linux/man-pages/man3/fflush.3.html:
+        # > If the stream argument is NULL, fflush() flushes all
+        # > open output streams.
+        main_func = make_main0(
+            libc.fputs(
+                Val("some things here", type_=CTypes.ptr(CTypes.char)),
+                libc.stdout),
+            Decl(
+                "res", type_=CTypes.int, expr=libc.fflush(Null)),
+            libc.assert_(Expr(COps.eq, Var("res"), Val(0, type_=CTypes.int))),
+            Return(Val(0, type_=CTypes.int)))
+        expected = (
+            "#include <assert.h>",
+            "#include <stdio.h>",
+            "int main(void) {",
+            "fputs(\"some things here\", stdout);",
+            "int res = fflush(NULL);",
+            "assert(res == 0);",
+            "return 0;",
+            "}")
+        self.check_gen([[main_func]], expected)
