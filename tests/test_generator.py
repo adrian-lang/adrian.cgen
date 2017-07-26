@@ -63,6 +63,20 @@ class ExprTest(CgenTestCase):
         self.check_gen([inp], ("1 + 3 * 5 - 8 / 4;", ))
 
 
+class StringTest(CgenTestCase):
+
+    def make_val(self, s):
+        return cgen.Val(s, type_=cgen.CTypes.ptr(cgen.CTypes.char))
+
+    def test_without_escape_sequences(self):
+        self.check_gen(
+            [[self.make_val("hello, world")]], ("\"hello, world\";", ))
+
+    def test_with_newline(self):
+        self.check_gen(
+            [[self.make_val(r"hello, world\n")]], ("\"hello, world\\n\";", ))
+
+
 class FuncCallTest(CgenTestCase):
 
     def test_it_generates(self):
