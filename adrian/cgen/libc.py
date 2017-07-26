@@ -30,3 +30,8 @@ fputs = CFuncDescr(
     "fputs", rettype=CTypes.int,
     args=(CTypes.ptr(CTypes.char), CTypes.ptr(CTypes.file)),
     includes=[includes.stdio])
+
+fflush = CFuncDescr(
+    "fflush", rettype=CTypes.int,
+    args=(CTypes.ptr(CTypes.file), ),
+    includes=[includes.stdio])
