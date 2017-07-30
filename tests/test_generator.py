@@ -206,3 +206,42 @@ class FileTest(CgenTestCase):
             "#include <stdio.h>",
             "FILE* f = NULL;")
         self.check_gen([[decl]], expected)
+
+
+class CastTest(CgenTestCase):
+
+    def test_of_addition_expr(self):
+        expr = cgen.Cast(
+            cgen.Expr(
+                cgen.COps.plus,
+                cgen.Cast(
+                    cgen.Val("1", type_=cgen.CTypes.int),
+                    to=cgen.CTypes.uint_fast8),
+                cgen.Cast(
+                    cgen.Val("2", type_=cgen.CTypes.int),
+                    to=cgen.CTypes.uint_fast8)),
+            to=cgen.CTypes.size)
+        expected = (
+            "#include <stdint.h>",
+            "(size_t)((uint_fast8_t)(1) + (uint_fast8_t)(2));")
+        self.check_gen([[expr]], expected)
+
+    def test_of_struct_element(self):
+        cast = cgen.Cast(
+            cgen.StructElem(
+                cgen.CTypes.ptr(cgen.Var("self")), cgen.Var("data")),
+            to=cgen.CTypes.size)
+        self.check_gen([[cast]], ("(size_t)(self->data);", ))
+
+    def test_in_declaration(self):
+        char_ptr = cgen.CTypes.ptr(cgen.CTypes.char)
+        decl = cgen.Decl(
+            "thing", type_=char_ptr,
+            expr=cgen.Cast(
+                cgen.libc.malloc(cgen.SizeOf(cgen.CTypes.char)),
+                to=char_ptr))
+        # (some C joke)(explicit cast with malloc and sizeof of char)
+        expected = (
+            "#include <stdlib.h>",
+            "char* thing = (char*)(malloc(sizeof(char)));")
+        self.check_gen([[decl]], expected)

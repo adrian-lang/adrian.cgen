@@ -229,6 +229,24 @@ class SizeOf(_Object):
         return self._type
 
 
+class Cast(_Object):
+    """Type cast operator."""
+
+    _keys = ("expr", "to", )
+
+    def __init__(self, expr, to):
+        self._expr = expr
+        self._to = to
+
+    @property
+    def expr(self):
+        return self._expr
+
+    @property
+    def to(self):
+        return self._to
+
+
 class Null(_Object):
     """NULL macro."""
 
