@@ -20,6 +20,7 @@ _CTYPE_TO_STRING = {
             (objects.CTypes.void, "void"),
             (objects.CTypes.char, "char"),
             (objects.CTypes.file, "FILE"),
+            (objects.CTypes.size, "size_t"),
         ]]
 }
 
@@ -95,7 +96,9 @@ class NodeGenerator(_layers.Layer):
                 objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
             self.add_include(includes.stdint)
             return _CTYPE_TO_STRING[type(type_)]
-        elif isinstance(type_, (objects._Void, objects._Int)):
+        elif isinstance(
+                type_,
+                (objects._Void, objects._Int, objects._Char, objects._Size)):
             return _CTYPE_TO_STRING[type(type_)]
         elif isinstance(type_, objects.StructType):
             return "struct {}".format(type_.name)
@@ -137,7 +140,16 @@ class NodeGenerator(_layers.Layer):
             return "{}{}{}".format(struct_name, sep, self.expr(expr.elem_name))
         elif expr is objects.Null:
             return "NULL"
+        elif isinstance(expr, objects.Cast):
+            return self.sub_cast(expr)
         errors.not_implemented("expr is not supported")  # pragma: no cover
+
+    def sub_cast(self, cast):
+        return "({})({})".format(self.type_(cast.to), self.expr(cast.expr))
+
+    @_layers.register(objects.Cast)
+    def cast(self, cast):
+        return "".join([self.sub_cast(cast), ";"])
 
     def sub_decl(self, decl):
         """Generates declaration without semicolon."""
