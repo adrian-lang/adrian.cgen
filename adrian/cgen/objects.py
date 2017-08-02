@@ -145,6 +145,9 @@ class _Ptr(_Type):
     def __init__(self, type_):
         self._type = type_
 
+    def __eq__(self, other):
+        return self.type_ == other.type_
+
     @property
     def type_(self):
         return self._type
@@ -161,6 +164,9 @@ class _Array(_Type):
         if isinstance(size, str):
             assert size == "auto"
         self._size = size
+
+    def __eq__(self, other):
+        return self.type_ == other.type_ and self.size == other.size
 
     @property
     def type_(self):
@@ -261,6 +267,9 @@ class Val(_Object):
     def __init__(self, literal, type_):
         self._literal = literal
         self._type = type_
+
+    def __eq__(self, other):
+        return self.literal == other.literal and self.type_ == other.type_
 
     @property
     def literal(self):
