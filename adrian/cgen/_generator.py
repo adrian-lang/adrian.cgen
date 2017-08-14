@@ -101,7 +101,11 @@ class NodeGenerator(_layers.Layer):
                 (objects._Void, objects._Int, objects._Char, objects._Size)):
             return _CTYPE_TO_STRING[type(type_)]
         elif isinstance(type_, objects.StructType):
-            return "struct {}".format(type_.name)
+            fmt_string = "struct {}".format(type_.name)
+            if not isinstance(type_.name, str):
+                fmt_string = "struct {}".format(
+                    self.type_(type_.name))
+            return fmt_string
         elif isinstance(type_, objects._Ptr):
             # Recursively call self.type_ with ptr's "inner" type.
             return "{}*".format(self.type_(type_.type_))
@@ -128,6 +132,8 @@ class NodeGenerator(_layers.Layer):
             return self.sub_array_elem_by_index(expr)
         elif isinstance(expr, objects.CNameDescr):
             return self.sub_name_descr(expr)
+        elif isinstance(expr, objects.DeRef):
+            return "*{}".format(self.expr(expr.expr))
         #elif isinstance(expr, objects._Ptr):
         #    return "*{}".format(self.expr(expr.type_))
         elif isinstance(expr, objects.StructElem):

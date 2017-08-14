@@ -560,6 +560,18 @@ class Include(_Object):
         return self._module_name
 
 
+class DeRef(_Object):
+
+    _keys = ("expr", )
+
+    def __init__(self, expr):
+        self._expr = expr
+
+    @property
+    def expr(self):
+        return self._expr
+
+
 class Func(_Object):
     """Definition of function."""
 
