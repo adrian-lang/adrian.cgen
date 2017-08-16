@@ -11,9 +11,11 @@ _CTYPE_TO_STRING = {
         (type(ctype), val)
         for ctype, val in [
             (objects.CTypes.int_fast8, "int_fast8_t"),
+            (objects.CTypes.int_fast16, "int_fast16_t"),
             (objects.CTypes.int_fast32, "int_fast32_t"),
             (objects.CTypes.int_fast64, "int_fast64_t"),
             (objects.CTypes.uint_fast8, "uint_fast8_t"),
+            (objects.CTypes.uint_fast16, "uint_fast16_t"),
             (objects.CTypes.uint_fast32, "uint_fast32_t"),
             (objects.CTypes.uint_fast64, "uint_fast64_t"),
             (objects.CTypes.int, "int"),
@@ -91,8 +93,9 @@ class NodeGenerator(_layers.Layer):
     def type_(self, type_):
         # TODO: support other types.
         if isinstance(type_, tuple(map(type, (
-                objects.CTypes.int_fast8, objects.CTypes.int_fast32,
-                objects.CTypes.int_fast64, objects.CTypes.uint_fast8,
+                objects.CTypes.int_fast8, objects.CTypes.int_fast16,
+                objects.CTypes.int_fast32, objects.CTypes.int_fast64,
+                objects.CTypes.uint_fast8, objects.CTypes.uint_fast16,
                 objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
             self.add_include(includes.stdint)
             return _CTYPE_TO_STRING[type(type_)]
@@ -227,8 +230,9 @@ class NodeGenerator(_layers.Layer):
 
     def sub_val(self, value):
         if isinstance(value.type_, tuple(map(type, (
-                objects.CTypes.int_fast8, objects.CTypes.int_fast32,
-                objects.CTypes.int_fast64, objects.CTypes.uint_fast8,
+                objects.CTypes.int_fast8, objects.CTypes.int_fast16,
+                objects.CTypes.int_fast32, objects.CTypes.int_fast64,
+                objects.CTypes.uint_fast8, objects.CTypes.uint_fast16,
                 objects.CTypes.uint_fast32, objects.CTypes.uint_fast64)))):
             self.add_include(includes.stdint)
             return value.literal

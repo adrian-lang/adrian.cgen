@@ -94,47 +94,46 @@ class _Type(_Object):
 
 class _UIntFast8(_Type):
     """uint_fast8_t."""
-    pass
+
+
+class _UIntFast16(_Type):
+    """uint_fast16_t."""
 
 
 class _UIntFast32(_Type):
     """uint_fast32_t."""
-    pass
 
 
 class _UIntFast64(_Type):
     """uint_fast64_t."""
-    pass
 
 
 class _IntFast8(_Type):
     """int_fast8_t."""
-    pass
+
+
+class _IntFast16(_Type):
+    """int_fast16_t."""
 
 
 class _IntFast32(_Type):
     """int_fast32_t."""
-    pass
 
 
 class _IntFast64(_Type):
     """int_fast64_t."""
-    pass
 
 
 class _Int(_Type):
     """int."""
-    pass
 
 
 class _Size(_Type):
     """size_t"""
-    pass
 
 
 class _Char(_Type):
     """char."""
-    pass
 
 
 class _Ptr(_Type):
@@ -190,9 +189,11 @@ class CTypes(_Object):
     """Container to ease importing."""
     int = _Int()
     int_fast8 = _IntFast8()
+    int_fast16 = _IntFast16()
     int_fast32 = _IntFast32()
     int_fast64 = _IntFast64()
     uint_fast8 = _UIntFast8()
+    uint_fast16 = _UIntFast16()
     uint_fast32 = _UIntFast32()
     uint_fast64 = _UIntFast64()
     size = _Size()
